@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>注册</title>
+<script type="text/javascript">
+  function checkPassword() {
+    var confirm = document.getElementById('confirm'); 
+    var valid = document.getElementById('password').value == confirm.value;
+    confirm.setCustomValidity(valid ? '' : '两次输入的密码不匹配');
+    return valid;
+  }
+  function getXMLRequest() {
+    return window.XMLHttpRequest ? 
+        new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  function httpGet(url) {
+    return new Promise(function(resolve, reject) {
+      var xmlhttp = getXMLRequest();
+      xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          resolve(JSON.parse(this.responseText));
+        }
+      };
+      xmlhttp.open("GET", url, true);
+      xmlhttp.send();
+    });
+  }
+  function lookup() {
+    var zip = document.querySelector('#zip').value;
+    if (!zip) return;
+
+    var url = 'https://maps.googleapis.com/maps/api/geocode/json?sensor=true&' + 
+        'address=' + zip;
+    httpGet(url).then(function(response) {
+      var error = document.querySelector('#address-error');
+      if (response.status != 'OK') {
+        error.innerHTML = 'Invalid zip code';
+        return;
+      }
+
+      error.innerHTML = '';
+      var address = window.countryData.fromGoogleResults(zip, response.results);
+      
+      document.querySelector('#city').value = address.city;
+      document.querySelector('#country').value = address.countryCode;
+      document.querySelector('#country').onchange();
+      document.querySelector('#state').value = address.stateIndex; 
+    });
+  }
+</script>
+<script src='https://www.google.com/recaptcha/api.js?hl=zh'></script>
+</head>
+
+<body class="center register-back">
+
+  <div class="css-table center register-form">
+    <div class="register-form">
+      <img src="images/banner.jpg" class="register-banner">
+      <h1 class="padded-element">美国智悲讲修菩提学会学员注册</h1>
+      <h2 class="padded-element">美洲地区以外用户请到
+        <a href="cgi-bin/redirect.php?url=http://www.zhibeifw.com/xxgx/baoming.php">
+          智悲佛网
+        </a>
+        报名。
+      </h2>
+    </div>
+    <form class="register-form" action="cgi-bin/register.php" method="post"
+        onsubmit="return checkPassword()">
+      <fieldset>
+        <div class="css-table-row">
+          <label class="css-table-cell padded-element" for="name">真实中文姓名:
+            <span class="required-asterisk">*</span>
+          </label>
+          <div class="css-table-cell"><input type="text" name="name" id="name" required></div>
+        </div>
+        <div class="css-table-row">
+          <label class="css-table-cell" for="email">Email:
+            <span class="required-asterisk">*</span>
+          </label>
+          <div class="css-table-cell">
+            <input type="email" name="email" id="email" placeholder="name@example.com" required>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <label class="css-table-cell" for="password">密码:</label>
+          <div class="css-table-cell"><input type="password" name="password" id="password"></div>
+        </div>
+        <div class="css-table-row">
+          <label class="css-table-cell" for="confirm">密码确认:</label>
+          <div class="css-table-cell">
+            <input type="password" name="confirm" id="confirm" onchange="checkPassword()">
+          </div>
+        </div>
+        <div class="css-table-row">
+          <label class="css-table-cell" for="sex">性别:</label>
+          <div class="css-table-cell">
+            <select name="sex">
+              <option value="0">女</option>
+              <option value="1">男</option>
+            </select>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <label class="css-table-cell" for="birthyear">出生年份:
+            <span class="required-asterisk">*</span>
+          </label>
+          <div class="css-table-cell">
+            <input type="number" name="birthyear" pattern="\d{4}" min="1900" placeholder="1970"
+                required oninvalid="setCustomValidity('请按照类似1970这样的格式填写')"
+                onchange="try{setCustomValidity('')}catch(e){}">
+          </div>
+        </div>
+        <div class="css-table-row">
+          <label class="css-table-cell" for="phone">联系电话:
+            <span class="required-asterisk">*</span>
+          </label>
+          <div class="css-table-cell">
+            <input type="tel" name="phone" pattern="[\d+-]+" placeholder="000-000-0000" required>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <label class="css-table-cell" for="im">微信(QQ):
+            <span class="required-asterisk">*</span>
+          </label>
+          <div class="css-table-cell">
+            <input type="text" name="im" placeholder="微信或QQ号" required>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell">
+            <label for="zip">邮编 <span class="required-asterisk">*</span></label>
+          </div>
+          <div class="css-table-cell">
+            <input type="text" id="zip" name="zip" onblur="lookup()" placeholder="12345" required>
+            <span id="address-error" class="error"></span>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell">
+            <label for="street">街道地址(仅号码和街道，邮寄法本用) </label>
+          </div>
+          <div class="css-table-cell">
+            <input type="text" id="street" placeholder="123 Main St" name="street">
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell">
+            <label for="city">城市 <span class="required-asterisk">*</span></label>
+          </div>
+          <div class="css-table-cell">
+            <input type="text" id="city" name="city" placeholder="Schenectady" required>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell">
+            <label for="state">State <span class="required-asterisk">*</span></label>
+          </div>
+          <div class="css-table-cell">
+            <select id="state" name="state"></select>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell">
+            <label for="state">国家或地区 <span class="required-asterisk">*</span></label>
+          </div>
+          <div class="css-table-cell">
+            <select id="country" name="country"></select>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell">
+            <label for="education">文化程度<span class="required-asterisk">*</span></label>
+          </div>
+          <div class="css-table-cell">
+            <select name="education">
+              <option value="1">高中及以下</option>
+              <option value="2">大专</option>
+              <option value="3">本科</option>
+              <option value="4">硕士</option>
+              <option value="5">博士</option>
+            </select>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell">
+            <label for="occupation">职业<span class="required-asterisk">*</span></label>
+          </div>
+          <div class="css-table-cell">
+            <input type="text" id="occupation" name="occupation" required>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell"><label for="skills">个人特长</label></div>
+          <div class="css-table-cell"><input type="text" name="skills"></div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell"><label for="conversion">皈依年份(若已皈依):</label></div>
+          <div class="css-table-cell">
+            <input type="number" name="conversion" pattern="\d{4}"
+                placeholder="2015">
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell"><label for="nickname">法名</label></div>
+          <div class="css-table-cell"><input type="text" name="nickname"></div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell"><label for="volunteer">是否愿意参加学会发心工作？</label></div>
+          <div class="css-table-cell">
+            <select id="channel" name="volunteer">
+              <option value="0">暂时先不</option>
+              <option value="1">小组管理</option>
+              <option value="2">资料收发</option>
+              <option value="3">统计报数</option>
+              <option value="5">英文翻译</option>
+              <option value="6">提供场所</option>
+              <option value="4">其他工作</option>
+            </select>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell"><label for="channel">您是通过什么渠道知道学会的？</label></div>
+          <div class="css-table-cell">
+            <select id="channel" name="channel">
+              <option value="0">其他方式</option>
+              <option value="1">智悲佛网</option>
+              <option value="2">国际佛学网</option>
+              <option value="3">美国智悲菩提讲修</option>
+              <option value="4">本地招生材料</option>
+              <option value="5">微信</option>
+              <option value="6">微博或论坛</option>
+              <option value="7">朋友介绍</option>
+            </select>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell"><label for="comments">报名原因和闻思经历(最多255字符)</label></div>
+          <div class="css-table-cell">
+            <textarea name="bio" maxlength="255" rows="5"></textarea>
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell">
+            <label for="agreement">我已经阅读并将遵守
+              <a href="https://docs.google.com/document/d/1nHy7BHnAUTw75CjjsBUPKIBU-nLlAAsPIIR35tSQLKk/edit?usp=sharing"
+                  target="_blank">
+                学会章程
+              </a>，并将遵守佛学会的管理规定。
+              <span class="required-asterisk">*</span>
+            </label>
+          </div>
+          <div class="css-table-cell"><input type="checkbox" name="agreement" required></div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell">请勾上右图中的选择框，以确认您不是机器人。
+            <span class="required-asterisk">*</span>
+          </div>
+          <div class="css-table-cell g-recaptcha"
+              data-sitekey="6Lf7GyYUAAAAAHYv0Ko3CQVChnU7911nSkv6F2Lo">
+          </div>
+        </div>
+        <div class="css-table-row">
+          <div class="css-table-cell"><input type="submit" value="注册"/></div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <script type="text/javascript" src="js/countries.js">
+  </script>
+  <script type="text/javascript">
+  var usIndex;
+  var countrySelect = document.getElementById('country');
+  
+  for (var index in countryData.countries) {
+    var country = countryData.countries[index];
+    var code = countryData.getCountryCode(index);
+    if (code == 'US') {
+      usIndex = index;
+    }
+    countrySelect.add(new Option(country, code));
+  }
+  
+  countrySelect.onchange = function() {
+    var stateSelect = document.getElementById('state');
+    stateSelect.options.length = 0;
+    var states = countryData.getStates(countrySelect.selectedIndex);
+    for (var sIndex in states) {
+      var state = states[sIndex];
+      stateSelect.add(new Option(state, sIndex));
+    }
+    if (countrySelect.selectedIndex == usIndex) {
+      stateSelect.selectedIndex = 32;
+    }
+  };
+
+  countrySelect.selectedIndex = usIndex;
+  countrySelect.onchange();
+  </script>
+</body>
+</html>
