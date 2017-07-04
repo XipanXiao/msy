@@ -3,14 +3,13 @@
     "servername": "127.0.0.1",
     "username": "root",
     "password": "2345678901",
-    "dbname": "buddcourses",
-    "zbServiceUrl": "http://www.zhibei.info/zb"
+    "dbname": "msy"
   },
   "msy-bicwdev.rhcloud.com": {
     "servername": "${OPENSHIFT_MYSQL_DB_HOST}",
     "username": "${OPENSHIFT_MYSQL_DB_USERNAME}",
     "password": "${OPENSHIFT_MYSQL_DB_PASSWORD}",
-    "dbname": "buddcourses",
+    "dbname": "msy",
     "session_path": "${OPENSHIFT_TMP_DIR}",
   },
   "closing": "*/?>"
