@@ -55,7 +55,7 @@ define('order_app', [
                 }
                 this.subTotal = this.subTotal.toFixed(2);
                 this.int_shipping = this.int_shipping.toFixed(2);
-                this.shipping = (this.shipping || 7).toFixed(2);
+                this.shipping = (this.shipping || 0).toFixed(2);
               },
               clear: function() {
                 this.items = {};
@@ -88,7 +88,7 @@ define('order_app', [
                 }
                 var cart = this;
                 return rpc.update_order(order).then(function(response) {
-                  if (response.data.updated) {
+                  if (parseInt(response.data.updated)) {
                     cart.clear();
                     $rootScope.$broadcast('reload-orders');
                     document.querySelector('#toast0').open();

@@ -183,7 +183,7 @@ function sanitize_address() {
   return $data;
 }
 
-function get_shop_items($category, $level) {
+function get_shop_items($category) {
   global $medoo;
 
   $filters = [];
@@ -191,28 +191,13 @@ function get_shop_items($category, $level) {
     $filters["category"] = $category; 
   }
 
-  if ($level != 99) {
-    $categories = array_keys(get_item_categories($level));
-    if ($category) {
-      if (!array_search($category, $categories)) return [];
-    } else {
-      $filters["category"] = $categories;
-    }
-  }
-  
-  return keyed_by_id($medoo->select("items", "*", ["AND" => $filters]));
+  return keyed_by_id($medoo->select("items", "*", $filters));
 }
 
 function get_item_categories($level) {
   global $medoo;
 
-  if ($level == 99) {
-    return keyed_by_id($medoo->select("item_categories", "*"));
-  }
-  return keyed_by_id($medoo->select("item_categories", "*", ["OR" => [
-          "level" => $level, 
-          "AND" => ["level[<=]" => $level, "shared" => 1]
-      ]]));
+  return keyed_by_id($medoo->select("item_categories", "*"));
 }
 
 function update_item($item) {
@@ -436,8 +421,7 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
       : permision_denied_error();
     }
   } elseif ($resource_id == "items") {
-    $level = get_requested_level($user, $_GET);
-    $response = get_shop_items($_GET["category"], $level);
+    $response = get_shop_items($_GET["category"]);
   } elseif ($resource_id == "item_categories") {
     $response = get_item_categories(get_requested_level($user, $_GET));
   } elseif ($resource_id == "order_stats") {
@@ -461,9 +445,6 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     if ($order["user_id"] != $user->id && !isOrderManager($user)) {
       $response = permision_denied_error();
     } elseif (empty($order["id"])) {
-      if (empty($order["class_name"])) {
-        $order["class_name"] = $user->classInfo["name"];
-      }
       $response = ["updated" => place_order($order)];
     } else {
       $response = ["updated" => update_order($order, isOrderManager($user))];

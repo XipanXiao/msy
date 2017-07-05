@@ -17,7 +17,8 @@
       </div>
       <div class="css-table-cell top-border">
         <h3>{{item.name}}</h3>
-        <div>价格：${{item.price}}</div>
+        <div>价格：${{item.cost}}</div>
+        <div>零售价格：${{item.price}}</div>
         <div class="int-shipping">国际运费预计：${{item.int_shipping}}</div>
         <span class="yellow-button" ng-click="addToCart(item)"
             flying-to='{"x": 550, "y": 50}'>

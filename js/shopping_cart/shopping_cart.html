@@ -27,10 +27,10 @@
     </div>
     <div ng-repeat="item in cart.items" class="css-table-row top-border deletable">
       <div class="css-table-cell">
-        <img src="{{item.image}}" class="item-image small">
+        <img src="{{item.image || 'images/default.jpg'}}" class="item-image small">
       </div>
       <div class="css-table-cell">
-        <h3>{{item.name}}</h3> by {{item.producer}}
+        <h3>{{item.name}}</h3>
       </div>
       <div class="css-table-cell">${{item.price}}</div>
       <div class="css-table-cell">${{item.int_shipping}}</div>

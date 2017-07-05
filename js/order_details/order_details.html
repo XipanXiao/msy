@@ -27,22 +27,6 @@
       <div>已付: ${{order.paid}}</div>
       <div>
         <strong>Balance: ${{order.balance}}</strong>
-        <a ng-if="!admin" href="https://www.paypal.me/BICWNY/{{order.balance}}" 
-            target="_blank">
-          付款
-        </a>
-      </div>
-      <div ng-if="order.paypal_trans_id">
-        <a href="https://www.paypal.com/myaccount/transaction/details/inline/{{order.paypal_trans_id}}"
-            target="_blank">
-          PayPal transaction
-        </a>
-      </div>
-      <div ng-if="order.usps_track_id">
-        <a href="https://tools.usps.com/go/TrackConfirmAction?tLabels={{order.usps_track_id}}"
-            target="_blank">
-          USPS tracking ID
-        </a>
       </div>
       <label>修改<input type="checkbox" ng-model="order.editing"></label>
       <div ng-if="order.editing">
@@ -54,16 +38,12 @@
             </label>
           </div>
         </div>
-        <label>PayPal transaction ID: 
-          <input ng-model="order.paypal_trans_id">
-        </label>
         <div><label>已付: $<input ng-model="order.paid"></label></div>
         <input type="button" value="确认修改" ng-click="onUpdate()">
       </div>
     </div>
     <div class="css-table-cell">
       <address-editor user="order" with-contact="true"></address-editor>
-      <div class="padded-element">班级：{{order.class_name}}</div>
     </div>
     <div class="css-table-cell">
       <div ng-if="order.shipping_date">发货：

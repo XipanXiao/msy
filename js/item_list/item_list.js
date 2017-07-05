@@ -21,26 +21,21 @@ define('item_list/item_list', ['flying/flying', 'services', 'utils'], function()
           
           function getItems() {
             return rpc.get_items().then(function(response) {
-              scope.bookIds.forEach(function(id) {
-                scope.items[id] = response.data[id];
+              scope.items = [];
+              utils.forEach(response.data, function(item) {
+                scope.items.push(item);
               });
               return scope.items;
             });
           }
           
-          function getBookList() {
-            return rpc.get_book_list().then(function(response) {
-              return scope.bookIds = response.data;
-            });
-          }
-
           scope.addToCart = function(item) {
             scope.cart.add(item);
           };
           
           scope.$watch('user', function(user) {
             if (user) {
-              utils.requestOneByOne([getBookList, getCategories, getItems]);
+              utils.requestOneByOne([getCategories, getItems]);
             }
           });
         },
