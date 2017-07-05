@@ -12,7 +12,4 @@ js/departments/departments.js
 js/order_stats/order_stats.js
 js/order_details/order_details.js
 js/orders/orders.js
-js/book_editor/book_editor.js
-js/book_list_details/book_list_details.js
-js/book_lists/book_lists.js
 js/order_admin_app.js

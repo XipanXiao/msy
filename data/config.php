@@ -10,7 +10,7 @@
     "username": "${OPENSHIFT_MYSQL_DB_USERNAME}",
     "password": "${OPENSHIFT_MYSQL_DB_PASSWORD}",
     "dbname": "msy",
-    "session_path": "${OPENSHIFT_TMP_DIR}",
+    "session_path": "${OPENSHIFT_TMP_DIR}"
   },
   "closing": "*/?>"
 }

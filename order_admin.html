@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="style.css?tag=201706082042">
-<title>法本订单管理</title>
+<title>订单管理</title>
 <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js">
 </script>
 <link rel="import" href="bower_components/iron-icon/iron-icon.html"/>
@@ -22,8 +22,7 @@
     <paper-tab>待发货订单</paper-tab>
     <paper-tab>待付款订单</paper-tab>
     <paper-tab>已完成订单</paper-tab>
-    <paper-tab ng-show="isOrderAdmin()">按班级汇总</paper-tab>
-    <paper-tab ng-show="isOrderAdmin()">班级订书单</paper-tab>
+    <paper-tab ng-show="isOrderAdmin()">汇总</paper-tab>
   </paper-tabs>
   
   <iron-pages selected="0">
@@ -41,9 +40,6 @@
     </div>
     <div>
       <order-stats ng-if="pageLoaded[3]"></order-stats>
-    </div>
-    <div>
-      <book-lists ng-if="pageLoaded[4]"></book-lists>
     </div>
   </iron-pages>
 </div>

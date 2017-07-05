@@ -46,20 +46,6 @@
     ini_set('session.cookie_lifetime', $session_timeout);
     ini_set('session.cookie_httponly', "1");
 
-    if ($config->origin_whitelist) {
-    	$origin = getallheaders()["Origin"];
-    	if ($config->origin_whitelist != "*" && 
-    			$config->origin_whitelist != $origin) {
-    		return $config;
-    	}
-      header("Access-Control-Allow-Origin: ". $origin);
-      header("Access-Control-Allow-Credentials: true");
-      header("Access-Control-Allow-Headers: Content-Type, Authorization, ".
-          "Content-Length, X-Requested-With, X-Prototype-Version, ".
-          "Origin, Allow, *");
-      header("Access-Control-Allow-Methods: GET,PUT,POST,DELETE,OPTIONS,HEAD");
-      header("Access-Control-Max-Age: ". $session_timeout);
-    }
     session_start();
     return $config;
   }
