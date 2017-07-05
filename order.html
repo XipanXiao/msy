@@ -28,7 +28,6 @@
 		    <span>购物车</span>
 		  </div>
     </paper-tab>
-    <paper-tab>我的订单</paper-tab>
   </paper-tabs>
   
   <iron-pages selected="0">
@@ -39,13 +38,10 @@
       <shopping-cart ng-if="pageLoaded[1]" cart="cart" user="user">
       </shopping-cart>
     </div>
-    <div>
-      <orders ng-if="pageLoaded[2]" user="user"></orders>
-    </div>
   </iron-pages>
 </div>
 
-<paper-toast id="toast0" text="订单提交成功！将跳转到“我的订单”中查看"></paper-toast>
+<paper-toast id="toast0" text="订单提交成功！请到“订单管理”中查看。"></paper-toast>
 
 <script type="text/javascript" src="order.js?tag=201707032246"></script>
 </body>

@@ -31052,7 +31052,6 @@ define('order_app', [
     'app_bar/app_bar',
     'item_list/item_list',
     'shopping_cart/shopping_cart',
-    'orders/orders',
     'services',
     'permission',
     'utils'],
@@ -31062,7 +31061,6 @@ define('order_app', [
       'AppBarModule',
       'ItemListModule',
       'ShoppingCartModule',
-      'OrdersModule',
       'ServicesModule',
       'PermissionModule',
       'UtilsModule',
@@ -31152,9 +31150,6 @@ define('order_app', [
                       cart.clear();
                       $rootScope.$broadcast('reload-orders');
                       document.querySelector('#toast0').open();
-                      setTimeout(function() {
-                        scope.selectTab(2);
-                      }, 3000);
                       return true;
                     }
                     return false;

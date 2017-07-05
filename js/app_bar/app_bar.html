@@ -3,10 +3,6 @@
     <a ng-if="!isIn('/order.html')" class="app-bar-link" href="order.html">
       下单
     </a>
-    <a ng-if="!isIn('/admin.html') && isAdmin()" class="app-bar-link" 
-        href="admin.html">
-      客户管理
-    </a>
     <a ng-if="!isIn('/order_admin.html') && (isOrderAdmin() || isAdmin())"
         class="app-bar-link" href="order_admin.html">
       订单管理
