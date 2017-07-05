@@ -48,13 +48,29 @@ define('address_editor/address_editor', ['services', 'utils'], function() {
           if (scope.user) utils.setCountryLabels(scope.user);
         });
         
-        window.addressInputChanged = function(name) {
-          console.log(name);
+        window.emailChanged = function(email) {
+          rpc.get_user(email).then(function(user) {
+            if (!user.id) return;
+
+            utils.mix_in(scope.user, user);
+          });
+        };
+
+        window.nameChanged = function(name) {
+          if (scope.user.email) return;
+
+          for (var index in (scope.users || [])) {
+            var user = scope.users[index];
+            if (user.name == name) {
+              window.emailChanged(user.email);
+              return;
+            }
+          }
         };
 
         if (scope.editing) {
           rpc.list_user_names().then(function(response) {
-            scope.userNames = response.data;
+            scope.users = response.data;
           });
         }
       },

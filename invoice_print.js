@@ -29517,6 +29517,11 @@ $provide.value("$locale", {
             format(serviceUrl, email || '', classId || '', sn || ''));
       },
       
+      list_user_names: function(prefix) {
+        return $http.get('{0}?rid=user_names&prefix={1}'
+            .format(serviceUrl, prefix || ''));
+      },
+      
       get_user: function(email) {
         return this.get_users(email).then(function(response) {
           if (response.data.error == "login needed") {
@@ -30315,6 +30320,32 @@ define('address_editor/address_editor', ['services', 'utils'], function() {
         scope.$watch('user.state', function() {
           if (scope.user) utils.setCountryLabels(scope.user);
         });
+        
+        window.emailChanged = function(email) {
+          rpc.get_user(email).then(function(user) {
+            if (!user.id) return;
+
+            utils.mix_in(scope.user, user);
+          });
+        };
+
+        window.nameChanged = function(name) {
+          if (scope.user.email) return;
+
+          for (var index in (scope.users || [])) {
+            var user = scope.users[index];
+            if (user.name == name) {
+              window.emailChanged(user.email);
+              return;
+            }
+          }
+        };
+
+        if (scope.editing) {
+          rpc.list_user_names().then(function(response) {
+            scope.users = response.data;
+          });
+        }
       },
 
       templateUrl : 'js/address_editor/address_editor.html?tag=201706041132'

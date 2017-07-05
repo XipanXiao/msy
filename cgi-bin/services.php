@@ -224,51 +224,15 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     if (!isYearLeader($user)) return;
     $response = update_course($_POST); 
   } elseif ($resource_id == "user") {
-    if (!isset($_POST["id"])) {
-      $response = ["error" => "User id is not set"];
-      echo json_encode($response);
-      exit();
+    $result = update_user($_POST);
+    if ($result && $result->id == $user->id) {
+      $user = $result;
+      $_SESSION['user'] = serialize($user);
     }
-    if (!canWriteUser($user, $_POST["id"])) {
-      exit();
-    }
-    
-    if (!empty($_POST["permission"]) && 
-        !canGrant($user, intval($_POST["permission"]))) {
-      exit();
-    }
-    
-    if (isset($_POST["classId"]) && intval($_POST["classId"]) == 0) {
-      if(!empty($_POST["classId_label"]) &&
-          !empty($_POST["start_year_label"])) {
-            $class_name = $_POST["start_year_label"]. $_POST["classId_label"];
-            $classId = get_class_id($class_name);
-      
-            if (!$classId) {
-              $classId = create_class($class_name, date("Y"));
-            }
-      
-            if (!$classId) {
-              $response = ["error" => "failed to create class ". $class_name];
-            } else {
-              $_POST["classId"] = $classId;
-            }
-          } else {
-            $response = ["error" => "check class_label and start_year_label"];
-          }
-    }
-    
-    if (!$response) {
-      $result = update_user($_POST);
-      if ($result && $result->id == $user->id) {
-        $user = $result;
-        $_SESSION['user'] = serialize($user);
-      }
   
-      $response = ["updated" => ($result ? 1 : 0)];
-      if (!$result) {
-        $response["error"] = get_db_error();
-      }
+    $response = ["updated" => $result];
+    if (!$result) {
+      $response["error"] = get_db_error();
     }
   } elseif ($resource_id == "class_prefs") {
     update_class_pref($user->id, $_POST);

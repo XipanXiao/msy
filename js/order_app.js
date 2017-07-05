@@ -61,8 +61,7 @@ define('order_app', [
                 this.items = {};
                 this.update();
               },
-              checkOut: function() {
-                var user = scope.user;
+              checkOut: function(user) {
                 var order = {
                   user_id: user.id,
                   sub_total: this.subTotal,
@@ -87,18 +86,32 @@ define('order_app', [
                   });
                 }
                 var cart = this;
-                return rpc.update_order(order).then(function(response) {
-                  if (parseInt(response.data.updated)) {
-                    cart.clear();
-                    $rootScope.$broadcast('reload-orders');
-                    document.querySelector('#toast0').open();
-                    setTimeout(function() {
-                      scope.selectTab(2);
-                    }, 3000);
+
+                var saveUserInfo = function() {
+                  return rpc.update_user(user).then(function(response) {
+                    var user = response.data.updated;
+                    if (!user.id) return false;
+                    order.user_id = user.id;
                     return true;
-                  }
-                  return false;
-                });
+                  });
+                };
+                
+                var placeOrder = function() {
+                  return rpc.update_order(order).then(function(response) {
+                    if (parseInt(response.data.updated)) {
+                      cart.clear();
+                      $rootScope.$broadcast('reload-orders');
+                      document.querySelector('#toast0').open();
+                      setTimeout(function() {
+                        scope.selectTab(2);
+                      }, 3000);
+                      return true;
+                    }
+                    return false;
+                  });
+                };
+                
+                utils.requestOneByOne([saveUserInfo, placeOrder]);
               }
             };
 

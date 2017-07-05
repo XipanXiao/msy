@@ -30017,6 +30017,11 @@ define('services', [], function() {
             format(serviceUrl, email || '', classId || '', sn || ''));
       },
       
+      list_user_names: function(prefix) {
+        return $http.get('{0}?rid=user_names&prefix={1}'
+            .format(serviceUrl, prefix || ''));
+      },
+      
       get_user: function(email) {
         return this.get_users(email).then(function(response) {
           if (response.data.error == "login needed") {
@@ -30403,6 +30408,32 @@ define('address_editor/address_editor', ['services', 'utils'], function() {
         scope.$watch('user.state', function() {
           if (scope.user) utils.setCountryLabels(scope.user);
         });
+        
+        window.emailChanged = function(email) {
+          rpc.get_user(email).then(function(user) {
+            if (!user.id) return;
+
+            utils.mix_in(scope.user, user);
+          });
+        };
+
+        window.nameChanged = function(name) {
+          if (scope.user.email) return;
+
+          for (var index in (scope.users || [])) {
+            var user = scope.users[index];
+            if (user.name == name) {
+              window.emailChanged(user.email);
+              return;
+            }
+          }
+        };
+
+        if (scope.editing) {
+          rpc.list_user_names().then(function(response) {
+            scope.users = response.data;
+          });
+        }
       },
 
       templateUrl : 'js/address_editor/address_editor.html?tag=201706041132'
@@ -30994,20 +31025,21 @@ define('shopping_cart/shopping_cart', [
         link: function(scope) {
           scope.confirming = false;
           scope.addrEditor = {};
+          scope.shoppingUser = {};
           
           scope.checkOut = function() {
             if (!scope.confirming) {
               scope.confirming = true;
               return;
             }
-            var user = scope.user;    
+            var user = scope.shoppingUser;    
             if (!user.name || !user.street || !user.city ||
                 !user.zip) {
               alert('请输入完整收货信息.');
               scope.addrEditor.editing = true;
               return;
             }
-            scope.cart.checkOut().then(function(placed) {
+            scope.cart.checkOut(user).then(function(placed) {
               if (placed) scope.confirming = false;
             });
           };
@@ -31079,8 +31111,7 @@ define('order_app', [
                 this.items = {};
                 this.update();
               },
-              checkOut: function() {
-                var user = scope.user;
+              checkOut: function(user) {
                 var order = {
                   user_id: user.id,
                   sub_total: this.subTotal,
@@ -31105,18 +31136,32 @@ define('order_app', [
                   });
                 }
                 var cart = this;
-                return rpc.update_order(order).then(function(response) {
-                  if (parseInt(response.data.updated)) {
-                    cart.clear();
-                    $rootScope.$broadcast('reload-orders');
-                    document.querySelector('#toast0').open();
-                    setTimeout(function() {
-                      scope.selectTab(2);
-                    }, 3000);
+
+                var saveUserInfo = function() {
+                  return rpc.update_user(user).then(function(response) {
+                    var user = response.data.updated;
+                    if (!user.id) return false;
+                    order.user_id = user.id;
                     return true;
-                  }
-                  return false;
-                });
+                  });
+                };
+                
+                var placeOrder = function() {
+                  return rpc.update_order(order).then(function(response) {
+                    if (parseInt(response.data.updated)) {
+                      cart.clear();
+                      $rootScope.$broadcast('reload-orders');
+                      document.querySelector('#toast0').open();
+                      setTimeout(function() {
+                        scope.selectTab(2);
+                      }, 3000);
+                      return true;
+                    }
+                    return false;
+                  });
+                };
+                
+                utils.requestOneByOne([saveUserInfo, placeOrder]);
               }
             };
 

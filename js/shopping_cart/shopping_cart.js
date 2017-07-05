@@ -12,20 +12,21 @@ define('shopping_cart/shopping_cart', [
         link: function(scope) {
           scope.confirming = false;
           scope.addrEditor = {};
+          scope.shoppingUser = {};
           
           scope.checkOut = function() {
             if (!scope.confirming) {
               scope.confirming = true;
               return;
             }
-            var user = scope.user;    
+            var user = scope.shoppingUser;    
             if (!user.name || !user.street || !user.city ||
                 !user.zip) {
               alert('请输入完整收货信息.');
               scope.addrEditor.editing = true;
               return;
             }
-            scope.cart.checkOut().then(function(placed) {
+            scope.cart.checkOut(user).then(function(placed) {
               if (placed) scope.confirming = false;
             });
           };

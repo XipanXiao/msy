@@ -295,7 +295,8 @@ function get_users($email, $classId = null, $user_id = null, $sn = null) {
 
 function get_user_names($prefix) {
   global $medoo;
-  return $medoo->select("users", "name");
+
+  return $medoo->select("users", ["email", "name"]);
 }
 
 function get_admins($permission) {
@@ -323,9 +324,8 @@ function update_user($user) {
 
   $datas = [];
   
-  $fields = ["internal_id", "name", "nickname", "email",
-      "phone", "street", "city", "country", "zip",
-      "im", "occupation", "comments", "skills", "bio"];
+  $fields =
+      ["name", "email", "phone", "street", "city", "country", "zip", "im"];
 
   foreach ($user as $key => $value) {
     if ($key == "password") {
@@ -335,10 +335,7 @@ function update_user($user) {
         $datas[$key] = intval($value);
       }
     } elseif (in_array($key, $fields)) {
-      if ($key == "email" && is_email_blocked($value)) exit();
-      $filter = 
-          $key == "email" ? FILTER_SANITIZE_EMAIL : FILTER_SANITIZE_STRING; 
-      $datas[$key] = filter_input(INPUT_POST, $key, $filter);
+      $datas[$key] = $value;
     }
   }
 
@@ -347,10 +344,6 @@ function update_user($user) {
       return current(get_users(null, null, intval($user["id"])));
     }
   } else {
-    if (empty($datas["classId"]) || intval($datas["classId"]) == 0) {
-      $datas["classId"] = 1;
-    }
-
     $datas["permission"] = get_student_permission();
     if ($id = $medoo->insert("users", $datas)) {
       return current(get_users(null, null, intval($id)));

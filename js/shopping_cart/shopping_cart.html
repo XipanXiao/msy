@@ -2,16 +2,7 @@
   <h2>确认收货地址和联系方式</h2>
   <hr>
   <div class="padded-element">
-    <address-editor user="user" with-contact="true"></address-editor>
-  </div>
-  <div class="padded-element">
-    <label>
-      <input type="checkbox" ng-model="addrEditor.editing">
-      修改送货地址
-    </label>
-  </div>
-  <div ng-if="addrEditor.editing" class="padded-element">
-    <address-editor editing="true" user="user" with-contact="true">
+    <address-editor editing="true" user="shoppingUser" with-contact="true">
     </address-editor>
   </div>
 </div>
