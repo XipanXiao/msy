@@ -3,7 +3,12 @@
     <div ng-if="withContact" class="css-table-row">
       <div class="css-table-cell"><label for="name">Name</label></div>
       <div class="css-table-cell">
-        <input id="name" ng-model="user.name" type="text" autofocus>
+        <input id="name" ng-model="user.name" type="text" list="user-names"
+            oninput="addressInputChanged(document.querySelector('#name').value)"
+            autofocus>
+        <datalist id="user-names">
+          <option ng-repeat="name in userNames" value="{{name}}"></option>
+        </datalist>
       </div>
     </div>
     <div class="css-table-row">

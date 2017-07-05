@@ -293,6 +293,11 @@ function get_users($email, $classId = null, $user_id = null, $sn = null) {
   return $users;
 }
 
+function get_user_names($prefix) {
+  global $medoo;
+  return $medoo->select("users", "name");
+}
+
 function get_admins($permission) {
   global $medoo;
 

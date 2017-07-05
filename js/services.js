@@ -127,6 +127,11 @@ define('services', [], function() {
             format(serviceUrl, email || '', classId || '', sn || ''));
       },
       
+      list_user_names: function(prefix) {
+        return $http.get('{0}?rid=user_names&prefix={1}'
+            .format(serviceUrl, prefix || ''));
+      },
+      
       get_user: function(email) {
         return this.get_users(email).then(function(response) {
           if (response.data.error == "login needed") {

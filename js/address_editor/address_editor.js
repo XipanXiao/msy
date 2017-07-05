@@ -47,6 +47,16 @@ define('address_editor/address_editor', ['services', 'utils'], function() {
         scope.$watch('user.state', function() {
           if (scope.user) utils.setCountryLabels(scope.user);
         });
+        
+        window.addressInputChanged = function(name) {
+          console.log(name);
+        };
+
+        if (scope.editing) {
+          rpc.list_user_names().then(function(response) {
+            scope.userNames = response.data;
+          });
+        }
       },
 
       templateUrl : 'js/address_editor/address_editor.html?tag=201706041132'
