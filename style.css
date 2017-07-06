@@ -651,3 +651,12 @@ body.white {
 .class-book-list {
 	width: 560px;
 }
+
+.desc-container {
+  position: relative;
+}
+
+.wechat-msg {
+  background-color: yellow;
+  position: absolute;
+}

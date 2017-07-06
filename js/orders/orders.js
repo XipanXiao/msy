@@ -88,6 +88,7 @@ define('orders/orders', [
               if (info) {
                 item.image = info.image;
                 item.name = info.name;
+                item.short_name = info.short_name;
                 item.producer = info.producer;
                 item.int_shipping = info.int_shipping;
               }
