@@ -3,14 +3,15 @@
 </div>
 <div class="padded-element">
   <label ng-repeat="category in categories">
-    <input type="checkbox" ng-model="category.selected">
+    <input type="radio" name="category" ng-model="selectedCategory.id"
+        value="{{category.id}}">
     {{category.name}}
   </label>
 </div>
 <strong ng-if="items.length == 0" class="padded-element">暂无。</strong>
 <div class="items css-table">
   <div ng-repeat="item in items | filter: {name: namePrefix}"
-      ng-if="categories[item.category].selected || namePrefix"
+      ng-if="categories[item.category].id == selectedCategory.id || namePrefix"
       class="css-table-row">
       <div class="css-table-cell top-border item-image-container">
         <img src="{{item.image || 'images/default.jpg'}}" class="item-image">
@@ -21,7 +22,7 @@
         <div>零售价格：${{item.price}}</div>
         <div class="int-shipping">国际运费预计：${{item.int_shipping}}</div>
         <span class="yellow-button" ng-click="addToCart(item)"
-            flying-to='{"x": 550, "y": 50}'>
+            flying-to='{"x": 750, "y": 50}'>
           <iron-icon icon="add-shopping-cart"></iron-icon>
           <span>加入购物车</span>
         </span>

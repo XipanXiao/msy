@@ -9,12 +9,14 @@ define('item_list/item_list', ['flying/flying', 'services', 'utils'], function()
         },
         link: function(scope) {
           scope.items = [];
+          scope.selectedCategory = {};
           
           function getCategories() {
             return rpc.get_item_categories().then(function(response) {
-              utils.forEach(response.data, function(category) {
-                category.selected = true;
-              });
+              for (var id in response.data) {
+                scope.selectedCategory.id = id;
+                break;
+              }
               return scope.categories = response.data;
             });
           }

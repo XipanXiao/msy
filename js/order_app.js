@@ -88,8 +88,7 @@ define('order_app', [
                 var saveUserInfo = function() {
                   return rpc.update_user(user).then(function(response) {
                     var user = response.data.updated;
-                    if (!user.id) return false;
-                    order.user_id = user.id;
+                    order.user_id = user && user.id || order.user_id;
                     return true;
                   });
                 };
@@ -106,7 +105,7 @@ define('order_app', [
                   });
                 };
                 
-                utils.requestOneByOne([saveUserInfo, placeOrder]);
+                return utils.requestOneByOne([saveUserInfo, placeOrder]);
               }
             };
 

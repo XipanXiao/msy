@@ -22,7 +22,11 @@ if(!empty($_POST["email"])) {
     $user->password = null;
     $_SESSION["user"] = serialize($user);
     
-    header("Location: ../order_admin.html" . $page);
+    $page = empty($_POST["redirect-url"]) 
+        ? "order.html"
+        : $_POST["redirect-url"];
+
+    header("Location: ../". $page);
   } else {
     echo "<h1>Error</h1>";
     echo "<p>Sorry, your account could not be found.".
