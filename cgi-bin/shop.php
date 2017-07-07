@@ -119,7 +119,6 @@ function place_order($order) {
   $items = $order["items"];
   unset($order["items"]);
 
-  $order = array_merge($order, sanitize_address());
   $id = $medoo->insert("orders", $order);
   if (!$id || empty($items)) return $id;
 

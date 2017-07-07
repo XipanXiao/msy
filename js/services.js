@@ -371,9 +371,12 @@ define('services', [], function() {
       },
 
       /// Given a [zip] code, returns the address.
-      lookup: function(zip) {
+      lookup: function(zip, countryCode) {
         var url = 'https://maps.googleapis.com/maps/api/geocode/json?' + 
-            'address={0}&sensor=true'.format(zip);
+            'address={0}&sensor=false&language=zh'.format(zip);
+        if (countryCode) {
+          url += '&components=country:{0}'.format(countryCode);
+        }
         return $http.get(url).then(function(response) {
           return response.data.status == 'OK' && response.data.results;
         });

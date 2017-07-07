@@ -613,6 +613,7 @@ body.white {
 .order-details-line.section {
   width: 800px;
   margin: 16px auto;
+  overflow: visible;
 }
 
 .items.css-table {

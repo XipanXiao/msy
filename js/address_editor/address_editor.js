@@ -34,7 +34,8 @@ define('address_editor/address_editor', ['services', 'utils'], function() {
             if (!results) return;
 
             var address = 
-                window.countryData.fromGoogleResults(user.zip, results);            
+                window.countryData.fromGoogleResults(user.zip, results);
+            user.street = address.formatted;
             user.city = address.city;
             user.country = address.countryCode;
             user.state = address.stateIndex; 
