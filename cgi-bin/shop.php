@@ -96,6 +96,23 @@ function get_orders($user_id, $filters, $withItems, $withAddress) {
   return $orders;
 }
 
+function update_inventory($itemDetail, $negative = false) {
+  global $medoo;
+  
+  $id = $itemDetail["item_id"];
+  $delta = intval($itemDetail["count"]);
+  if ($negative) {
+    $delta = -$delta;
+  }
+
+  $items = $medoo->select("items", ["id", "stock"], ["id" => $id]);
+  if (empty($items)) return 0;
+  
+  $item = current($items);
+  $item["stock"] = intval($item["stock"]) + $delta;
+  return update_item($item);
+}
+
 function place_order($order) {
   global $medoo;
 
@@ -109,7 +126,9 @@ function place_order($order) {
   foreach ($items as $item) {
     unset($item["id"]);
     $item["order_id"] = $id;
-    $medoo->insert("order_details", $item);
+    if ($medoo->insert("order_details", $item)) {
+      update_inventory($item, true);
+    }
   }
   return $id;
 }
@@ -134,8 +153,15 @@ function close_order($id) {
 
 function delete_order($id) {
   global $medoo;
-  
-  $medoo->delete("order_details", ["order_id" => $id]);
+
+  $items = $medoo->select("order_details", ["item_id", "count"],
+      ["order_id" => $id]);
+  if (!empty($items)) {
+    $medoo->delete("order_details", ["order_id" => $id]);
+    foreach ($items as $item) {
+      update_inventory($item);
+    }
+  }
   return $medoo->delete("orders", ["id" => $id]);
 }
 
@@ -201,7 +227,7 @@ function get_item_categories($level) {
 }
 
 function update_item($item) {
-	global $medoo;
+  global $medoo;
 
   return insertOrUpdate($medoo, "items", $item);
 }
@@ -319,19 +345,26 @@ function move_order_items($fromOrder, $toOrder) {
 function delete_order_item($id) {
   global $medoo;
   
-  return $medoo->delete("order_details", ["id" => $id]);
+  $item = get_single_record($medoo, "order_details", $id);
+  if (!$item) return 0;
+  
+  if ($medoo->delete("order_details", ["id" => $id])) {
+    update_inventory($item);
+  }
+
+  return 1;
 }
 
 function get_book_list($dep_id, $term, $classId) {
   global $medoo;
 
   if (!$dep_id && !$term) {
-  	$classes = $medoo->select("classes", "*", ["id" => intval($classId)]);
-  	if (empty($classes)) return [];
+    $classes = $medoo->select("classes", "*", ["id" => intval($classId)]);
+    if (empty($classes)) return [];
 
-  	$classInfo = current($classes);
-  	$dep_id = $classInfo["department_id"];
-  	$term = $classInfo["term"];
+    $classInfo = current($classes);
+    $dep_id = $classInfo["department_id"];
+    $term = $classInfo["term"];
   }
   return $medoo->select("book_lists", "item_id", ["AND" =>
       ["department_id" => intval($dep_id), "term" => intval($term)]]);

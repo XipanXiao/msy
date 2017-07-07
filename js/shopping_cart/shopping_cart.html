@@ -23,8 +23,8 @@
       <div class="css-table-cell">
         <h3>{{item.name}}</h3>
       </div>
-      <div class="css-table-cell">${{item.price}}</div>
-      <div class="css-table-cell">${{item.int_shipping}}</div>
+      <div class="css-table-cell">¥{{item.price}}</div>
+      <div class="css-table-cell">¥{{item.int_shipping}}</div>
       <div class="css-table-cell">
         <input type="number" min="1" ng-model="item.count" ng-change="cart.update()">
       </div>
@@ -39,13 +39,13 @@
   <div class="right">
     <div class="center-align flex">
       <div class="h-padded-element">
-        总价 ({{cart.size}} items): ${{cart.subTotal}}
+        总价 ({{cart.size}} items): ¥{{cart.subTotal}}
       </div>
       <div class="h-padded-element">
-        国际运费: ${{cart.int_shipping}}
+        国际运费: ¥{{cart.int_shipping}}
       </div>
       <div class="h-padded-element">
-        运费: ${{cart.shipping}}
+        运费: ¥{{cart.shipping}}
       </div>
       <div class="yellow-button check-out-button center-align" ng-click="checkOut()">
         {{confirming ? '提交订单' : '结账'}}

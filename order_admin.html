@@ -22,6 +22,7 @@
     <paper-tab>待发货订单</paper-tab>
     <paper-tab>待付款订单</paper-tab>
     <paper-tab>已完成订单</paper-tab>
+    <paper-tab>库存管理</paper-tab>
   </paper-tabs>
   
   <iron-pages selected="0">
@@ -38,7 +39,7 @@
       </orders>
     </div>
     <div>
-      <order-stats ng-if="pageLoaded[3]"></order-stats>
+      <inventory ng-if="pageLoaded[3]"></inventory>
     </div>
   </iron-pages>
 </div>
