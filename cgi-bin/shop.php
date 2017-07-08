@@ -96,7 +96,7 @@ function get_orders($user_id, $filters, $withItems, $withAddress) {
   return $orders;
 }
 
-function update_inventory($itemDetail, $negative = false) {
+function update_inventory($itemDetail, $countryCode, $negative = false) {
   global $medoo;
   
   $id = $itemDetail["item_id"];
@@ -105,11 +105,12 @@ function update_inventory($itemDetail, $negative = false) {
     $delta = -$delta;
   }
 
-  $items = $medoo->select("items", ["id", "stock"], ["id" => $id]);
+  $field = "inventory_". strtolower($countryCode);
+  $items = $medoo->select("items", ["id", $field], ["id" => $id]);
   if (empty($items)) return 0;
   
   $item = current($items);
-  $item["stock"] = intval($item["stock"]) + $delta;
+  $item[$field] = intval($item[$field]) + $delta;
   return update_item($item);
 }
 
@@ -126,7 +127,7 @@ function place_order($order) {
     unset($item["id"]);
     $item["order_id"] = $id;
     if ($medoo->insert("order_details", $item)) {
-      update_inventory($item, true);
+      update_inventory($item, $order["country"], true);
     }
   }
   return $id;
@@ -150,15 +151,22 @@ function close_order($id) {
   return $medoo->delete("orders", ["id" => $id]);
 }
 
+function get_order_country_code($id) {
+  global $medoo;
+
+  $order = get_single_record($medoo, "orders", $id);
+  return $order ? $order["country"] : null;
+}
 function delete_order($id) {
   global $medoo;
 
   $items = $medoo->select("order_details", ["item_id", "count"],
       ["order_id" => $id]);
   if (!empty($items)) {
-    $medoo->delete("order_details", ["order_id" => $id]);
+    $countryCode = get_order_country_code($id);
+  	$medoo->delete("order_details", ["order_id" => $id]);
     foreach ($items as $item) {
-      update_inventory($item);
+      update_inventory($item, $countryCode);
     }
   }
   return $medoo->delete("orders", ["id" => $id]);
@@ -348,7 +356,8 @@ function delete_order_item($id) {
   if (!$item) return 0;
   
   if ($medoo->delete("order_details", ["id" => $id])) {
-    update_inventory($item);
+    $countryCode = get_order_country_code($item["order_id"]);
+  	update_inventory($item, $countryCode);
   }
 
   return 1;

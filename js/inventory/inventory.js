@@ -20,7 +20,8 @@ define('inventory/inventory', [
           }
           
           scope.save = function(item) {
-            rpc.update_item({id: item.id, stock: item.stock});
+            rpc.update_item({id: item.id, inventory_cn: item.inventory_cn,
+                inventory_us: item.inventory_us});
           };
           
           utils.requestOneByOne([getCategories, getItems]);

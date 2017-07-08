@@ -7,6 +7,7 @@
     <div class="css-table-cell">进价</div>
     <div class="css-table-cell">零售价</div>
     <div class="css-table-cell">库存</div>
+    <div class="css-table-cell">美国库存</div>
     <div class="css-table-cell">类别</div>
   </div>
   <div ng-repeat="item in items | filter: {name: namePrefix}"
@@ -15,7 +16,11 @@
     <div class="css-table-cell">¥{{item.cost}}</div>
     <div class="css-table-cell">¥{{item.price}}</div>
     <div class="css-table-cell">
-      <editable-label value="item.stock" on-change="save(item)">
+      <editable-label value="item.inventory_cn" on-change="save(item)">
+      </editable-label>
+    </div>
+    <div class="css-table-cell">
+      <editable-label value="item.inventory_us" on-change="save(item)">
       </editable-label>
     </div>
     <div class="css-table-cell">{{categories[item.category].name}}</div>
