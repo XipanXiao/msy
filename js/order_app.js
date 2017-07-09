@@ -86,10 +86,11 @@ define('order_app', [
                 var cart = this;
 
                 var saveUserInfo = function() {
+                  if (user.id) return utils.truePromise();
                   return rpc.update_user(user).then(function(response) {
                     var user = response.data.updated;
                     order.user_id = user && user.id || order.user_id;
-                    return true;
+                    return user.id;
                   });
                 };
                 
