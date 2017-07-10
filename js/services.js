@@ -127,6 +127,10 @@ define('services', [], function() {
             format(serviceUrl, email || '', classId || '', sn || ''));
       },
       
+      getUserById: function(id) {
+        return $http.get('{0}?rid=users&id={1}'.format(serviceUrl, id));
+      },
+      
       list_user_names: function(prefix) {
         return $http.get('{0}?rid=user_names&prefix={1}'
             .format(serviceUrl, prefix || ''));

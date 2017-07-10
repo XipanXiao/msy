@@ -296,7 +296,7 @@ function get_users($email, $classId = null, $user_id = null, $sn = null) {
 function get_user_names($prefix) {
   global $medoo;
 
-  return $medoo->select("users", ["email", "name"]);
+  return $medoo->select("users", ["id", "name"]);
 }
 
 function get_admins($permission) {

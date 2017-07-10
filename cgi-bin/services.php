@@ -109,22 +109,16 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
   } elseif ($resource_id == "user_names") {
     $response = get_user_names($_GET["prefix"]);
   } elseif ($resource_id == "users") {
+    $id = empty($_GET["id"]) ? null : $_GET["id"];
     $email = empty($_GET["email"]) ? null : $_GET["email"];
-    $classId = empty($_GET["classId"]) ? null : $_GET["classId"];
-    $sn = empty($_GET["sn"]) ? null : $_GET["sn"];
-
-    if ($classId) {
-      $classInfo = get_class_info($classId);
-
-      if ($classInfo && canRead($user, $classInfo)) {
-        $response = get_users(null, $classId);
-      }
-    } elseif ($email || $sn) {
-      $response = current($email ?
-          get_users($email) : get_users(null, null, null, $sn));
+    
+    if ($email) {
+      $response = current(get_users($email));
       if ($response && !canReadUser($response)) {
         $response = null;
       }
+    } elseif ($id) {
+      $response = get_user_by_id($id);
     } else {
       $user = current(get_users($user->email));
       // Refresh the session user data every time the user access the home page.

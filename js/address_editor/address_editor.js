@@ -45,28 +45,22 @@ define('address_editor/address_editor', ['services', 'utils'], function() {
         scope.$watch('user.country', function() {
           if (scope.user) scope.onCountryChange(scope.user);
         });
-        scope.$watch('user.state', function() {
-          if (scope.user) utils.setCountryLabels(scope.user);
-        });
         
-        window.emailChanged = function(email) {
-          rpc.get_user(email).then(function(user) {
-            if (!user.id) return;
-
-            utils.mix_in(scope.user, user);
-          });
-        };
-
         window.nameChanged = function(name) {
-          if (scope.user.email) return;
-
           for (var index in (scope.users || [])) {
             var user = scope.users[index];
             if (user.name == name) {
-              window.emailChanged(user.email);
+              rpc.getUserById(user.id).then(function(response) {
+                var user = response.data;
+                if (user && user.id) {
+                  utils.mix_in(scope.user, user);
+                }
+              });
+
               return;
             }
           }
+          scope.user.isNew = true;
         };
 
         if (scope.editing) {
