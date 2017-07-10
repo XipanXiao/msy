@@ -54,6 +54,7 @@ define('address_editor/address_editor', ['services', 'utils'], function() {
                 var user = response.data;
                 if (user && user.id) {
                   utils.mix_in(scope.user, user);
+                  scope.user.isNew = false;
                 }
               });
 
