@@ -88,7 +88,11 @@
       ng-click="item.selected = !item.selected">
     <div class="css-table-cell">{{item.name}}</div>
     <div class="css-table-cell">{{item.count}}</div>
-    <div class="css-table-cell">${{item.price}}</div>
+    <div class="css-table-cell">
+      <editable-label value="item.price"
+          on-change="onUpdateItem({'order': order, 'item': item})">
+      </editable-label>
+    </div>
     <div class="css-table-cell">${{item.int_shipping}}</div>
     <div class="css-table-cell" ng-if="admin">
       <iron-icon icon="delete" class="delete-button"

@@ -1,6 +1,8 @@
 define('order_details/order_details', [
+    'editable_label/editable_label',
     'address_editor/address_editor', 'permission'], function() {
   return angular.module('OrderDetailsModule', [
+      'EditableLabelModule',
       'AddressEditorModule', 'PermissionModule'])
     .directive('orderDetails', function(perm) {
       return {
@@ -11,6 +13,7 @@ define('order_details/order_details', [
           onRemoveItem: '&',
           onSplit: '&',
           onUpdate: '&',
+          onUpdateItem: '&',
           order: '='
         },
         link: function(scope) {

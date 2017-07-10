@@ -335,6 +335,24 @@ define('orders/orders', [
             _removeOrderItem(order, item);
           };
           
+          scope.updateItem = function(order, item) {
+            var updateOrderItem = function() {
+              return rpc.update_order_item(item).then(function(response) {
+                return response.data.updated;
+              });
+            };
+            var updateOrder = function() {
+              var subTotal = 0.0;
+              order.items.forEach(function(item) {
+                subTotal += item.count * parseMoney(item.price);
+              });
+              order.sub_total = subTotal.toFixed(2);
+              var data = {id: order.id, sub_total: order.sub_total};
+              return rpc.update_order(data);
+            };
+            return utils.requestOneByOne([updateOrderItem, updateOrder]);
+          };
+          
           function _removeOrderItem(order, item) {
             var removeItem = function() {
               return rpc.remove_order_item(item.id).then(function(response) {

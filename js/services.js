@@ -253,6 +253,12 @@ define('services', [], function() {
             'cgi-bin/shop.php');
       },
       
+      update_order_item: function(item) {
+        item.rid = 'order_details';
+        return http_form_post($http, $httpParamSerializerJQLike(item),
+            'cgi-bin/shop.php');
+      },
+      
       merge_orders: function(order_ids) {
         var request = {
             rid: 'merge_orders',

@@ -164,7 +164,7 @@ function delete_order($id) {
       ["order_id" => $id]);
   if (!empty($items)) {
     $countryCode = get_order_country_code($id);
-  	$medoo->delete("order_details", ["order_id" => $id]);
+    $medoo->delete("order_details", ["order_id" => $id]);
     foreach ($items as $item) {
       update_inventory($item, $countryCode);
     }
@@ -237,6 +237,16 @@ function update_item($item) {
   global $medoo;
 
   return insertOrUpdate($medoo, "items", $item);
+}
+
+function update_order_item($item) {
+  global $medoo;
+
+  if (empty($item["id"])) return 0;
+
+  return $medoo->update("order_details", 
+      build_update_data(["price", "count"], $item), 
+      ["id" => $item["id"]]);
 }
 
 function get_order_stats($year) {
@@ -357,7 +367,7 @@ function delete_order_item($id) {
   
   if ($medoo->delete("order_details", ["id" => $id])) {
     $countryCode = get_order_country_code($item["order_id"]);
-  	update_inventory($item, $countryCode);
+    update_inventory($item, $countryCode);
   }
 
   return 1;
@@ -495,9 +505,9 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
       ? ["updated" => 
           move_order_items($_POST["from_order"], $_POST["to_order"])]
       : permision_denied_error();
-  } elseif ($resource_id == "book_lists") {
+  } elseif ($resource_id == "order_details") {
     $response = isOrderManager($user)
-      ? ["updated" => update_book_list($_POST)]
+      ? ["updated" => update_order_item($_POST)]
       : permision_denied_error();
   } elseif ($resource_id == "class_book_lists") {
     $response = isOrderManager($user)
