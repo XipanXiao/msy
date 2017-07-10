@@ -20,8 +20,7 @@ define('shopping_cart/shopping_cart', [
               return;
             }
             var user = scope.shoppingUser;    
-            if (!user.name || !user.street || !user.city ||
-                !user.zip) {
+            if (!user.name || !user.street || !user.country) {
               alert('请输入完整收货信息.');
               scope.addrEditor.editing = true;
               return;
