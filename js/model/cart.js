@@ -40,9 +40,10 @@ define('model/cart', [], function() {
       this.items = {};
       this.update();
     },
-    checkOut: function(user) {
+    checkOut: function(user, refill) {
       var order = {
         user_id: user.id,
+        status: refill ? -1 : 0,
         sub_total: this.subTotal,
         int_shipping: this.int_shipping,
         shipping: this.shipping,
@@ -60,13 +61,15 @@ define('model/cart', [], function() {
         var item = this.items[id];
         order.items.push({
           item_id: item.id,
-          price: item.price,
+          price: refill ? item.cost : item.price,
           count: item.count
         });
       }
       var cart = this;
 
       var saveUserInfo = function() {
+        if (refill) return utils.truePromise();
+
         if (user.isNew) {
           delete user.isNew;
           delete user.id;
@@ -82,8 +85,9 @@ define('model/cart', [], function() {
         return rpc.update_order(order).then(function(response) {
           if (parseInt(response.data.updated)) {
             cart.clear();
-            rootScope.$broadcast('reload-orders');
-            document.querySelector('#toast0').open();
+            rootScope && rootScope.$broadcast('reload-orders');
+            var toast = document.querySelector('#toast0');
+            toast && toast.open();
             return true;
           }
           return false;

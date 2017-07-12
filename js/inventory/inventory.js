@@ -1,12 +1,25 @@
 define('inventory/inventory', [
-    'editable_label/editable_label', 'services', 'utils'], function() {
+    'model/cart',
+    'editable_label/editable_label',
+    'orders/orders',
+    'shopping_cart/shopping_cart', 
+    'services', 'utils'], function(Cart) {
   return angular.module('InventoryModule', [
         'EditableLabelModule',
+        'OrdersModule',
+        'ShoppingCartModule',
         'ServicesModule',
         'UtilsModule'])
-    .directive('inventory', function(rpc, utils) {
+    .directive('inventory', function($rootScope, rpc, utils) {
       return {
+        scope: {
+          user: '='
+        },
         link: function(scope) {
+          scope.year = new Date().getFullYear();
+          scope.cart = new Cart({rpc: rpc, utils: utils,
+              rootScope: $rootScope});
+
           function getCategories() {
             return rpc.get_item_categories().then(function(response) {
               return scope.categories = response.data;

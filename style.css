@@ -661,3 +661,11 @@ body.white {
   background-color: yellow;
   position: absolute;
 }
+
+.hover-button {
+  visibility: hidden;
+}
+
+.hover-button-row:hover .hover-button {
+  visibility: visible;
+}

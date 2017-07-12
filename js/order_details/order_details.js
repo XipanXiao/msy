@@ -17,7 +17,7 @@ define('order_details/order_details', [
           order: '='
         },
         link: function(scope) {
-          scope.statusLabels = {0: '待发货', 1: '已发货', 3: '钱货两清'};
+          scope.statusLabels = {'-1': '进货', 0: '待发货', 1: '已发货', 3: '钱货两清'};
           scope.hasSelection = function() {
             function itemSelected(item) { return item.selected; }
             var items = scope.order.items;

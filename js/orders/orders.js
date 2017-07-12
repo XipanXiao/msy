@@ -24,9 +24,11 @@ define('orders/orders', [
         link: function(scope) {
           scope.years = [];
 
-          for (var year = 2017; year <= (scope.year || 0); year++) {
-            scope.years.push(year);
-          }
+          scope.$watch('year', function() {
+            for (var year = 2017; year <= (scope.year || 0); year++) {
+              scope.years.push(year);
+            }
+          });
           
           function get_items() {
             return rpc.get_items(null, 99).then(function(response) {

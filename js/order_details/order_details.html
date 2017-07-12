@@ -1,13 +1,13 @@
 <link rel="import" href="bower_components/iron-icons/editor-icons.html">
 <div class="css-table order-details-header">
-  <div class="css-table-row" ng-class="{'deletable': !order.status}">
+  <div class="css-table-row deletable">
     <div class="css-table-cell">
       <div>订单日期</div>
       <div>{{order.created_time}}</div>
       <div ng-switch="admin" class="padded-element">
         <label ng-switch-when="true">订单状态: 
           <select ng-model="order.status"
-              ng-options="statusLabels[value] for value in [0, 1, 3]"
+              ng-options="statusLabels[value] for value in [-1, 0, 1, 3]"
               ng-change="onUpdate()">
           </select>
         </label>

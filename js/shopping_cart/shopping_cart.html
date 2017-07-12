@@ -2,7 +2,7 @@
   <h2>确认收货地址和联系方式</h2>
   <hr>
   <div class="padded-element">
-    <address-editor editing="true" user="shoppingUser" with-contact="true">
+    <address-editor editing="true" user="user" with-contact="true">
     </address-editor>
   </div>
 </div>
@@ -23,7 +23,12 @@
       <div class="css-table-cell">
         <h3>{{item.name}}</h3>
       </div>
-      <div class="css-table-cell">¥{{item.price}}</div>
+      <div class="css-table-cell">
+        <span ng-switch="refill">
+          <span ng-switch-when="true">¥{{item.cost}}</span>
+          <span ng-switch-default>¥{{item.price}}</span>
+        </span>
+      </div>
       <div class="css-table-cell">¥{{item.int_shipping}}</div>
       <div class="css-table-cell">
         <input type="number" min="1" ng-model="item.count" ng-change="cart.update()">
