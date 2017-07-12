@@ -37,7 +37,18 @@ define('inventory/inventory', [
                 inventory_us: item.inventory_us});
           };
           
-          utils.requestOneByOne([getCategories, getItems]);
+          scope.addToCart = function(item) {
+            var inventryItem = utils.mix_in({}, item);
+            inventryItem.price = inventryItem.cost;
+            scope.cart.add(inventryItem);
+          };
+          
+          function reload() {
+            utils.requestOneByOne([getCategories, getItems]);
+          }
+          
+          $rootScope.$on('reload-orders', reload);
+          reload();
         },
         templateUrl : 'js/inventory/inventory.html?tag=201707032246'
       };

@@ -6,6 +6,7 @@ define('model/cart', [], function() {
     subTotal: 0.0,
     shipping: 0.0,
     items: {},
+    isEmpty: true,
     add: function(item) {
       var existing = this.items[item.id];
       if (existing) {
@@ -25,12 +26,14 @@ define('model/cart', [], function() {
       this.subTotal = 0.0;
       this.int_shipping = 0.0;
       this.shipping = 0.0;
+      this.isEmpty = true;
       for (var id in this.items) {
         var item = this.items[id];
         this.size += item.count;
         this.subTotal += item.count * item.price;
         this.int_shipping += item.count * item.int_shipping;
         this.shipping += item.count * item.shipping;
+        this.isEmpty = false;
       }
       this.subTotal = this.subTotal.toFixed(2);
       this.int_shipping = this.int_shipping.toFixed(2);
@@ -61,8 +64,8 @@ define('model/cart', [], function() {
         var item = this.items[id];
         order.items.push({
           item_id: item.id,
-          price: refill ? item.cost : item.price,
-          count: item.count
+          price: item.price,
+          count: refill ? (-item.count) : item.count
         });
       }
       var cart = this;

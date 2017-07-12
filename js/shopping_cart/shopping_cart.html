@@ -1,12 +1,18 @@
 <div ng-if="confirming">
   <h2>确认收货地址和联系方式</h2>
   <hr>
-  <div class="padded-element">
-    <address-editor editing="true" user="user" with-contact="true">
+  <div ng-switch="refill" class="padded-element">
+    <label ng-switch-when="true">请选择目标：
+      <select ng-model="user.country">
+        <option value="CN">中国库存</option>
+        <option value="US">美国库存</option>
+      </select>
+    </label>
+    <address-editor ng-switch-default editing="true" user="user" with-contact="true">
     </address-editor>
   </div>
 </div>
-<div ng-if="cart.size">
+<div ng-if="!cart.isEmpty">
   <div class="css-table shopping-cart-list">
     <div class="css-table-row">
       <div class="css-table-cell"></div>
