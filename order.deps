@@ -12,4 +12,5 @@ js/item_list/item_list.js
 js/order_details/order_details.js
 js/orders/orders.js
 js/shopping_cart/shopping_cart.js
+js/model/cart.js
 js/order_app.js
