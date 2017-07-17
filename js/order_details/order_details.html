@@ -43,7 +43,7 @@
         <div ng-if="admin">          
           <div><label>运费: $<input ng-model="order.shipping"></label></div>
           <div>
-            <label>USPS tracking ID:
+            <label>快递单号:
               <input ng-model="order.usps_track_id">
             </label>
           </div>
@@ -54,6 +54,10 @@
     </div>
     <div class="css-table-cell">
       <address-editor user="order" with-contact="true"></address-editor>
+      <a ng-if="order.usps_track_id" target="_blank"
+          href="http://www.kjkd.com/customer/oddtracking?txtbill={{order.usps_track_id}}">
+        包裹跟踪
+      </a>
     </div>
     <div class="css-table-cell">
       <div ng-if="order.shipping_date">发货：

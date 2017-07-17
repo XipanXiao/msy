@@ -5,6 +5,8 @@ include_once 'class_prefs.php';
 include_once 'tables.php';
 include_once 'util.php';
 
+exit();
+
 if (!empty($_POST["id"])) exit();
 
 if(! empty ( $_POST ['email'] ) && ! empty ( $_POST ['name'] )) {
