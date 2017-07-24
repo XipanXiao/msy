@@ -16,12 +16,6 @@
       <option ng-repeat="phone in phones" value="{{phone}}"></option>
     </datalist>
   </label>
-  <label class="css-table-cell" ng-show="orders.length">输入班级过滤：
-    <input ng-model="className" list="class-names">
-    <datalist id="class-names">
-      <option ng-repeat="name in classNames" value="{{name}}"></option>
-    </datalist>
-  </label>
   </div>
 </div>
 <div ng-if="admin && isOrderAdmin() && orders.length" class="css-table">
@@ -32,23 +26,6 @@
 	  <div class="css-table-cell"> 
 	    金额 {{stats.sub_total}}
 	  </div>
-    <div class="css-table-cell"> 
-      预计国际运费 {{stats.int_shipping_estmt}}
-    </div>
-    <div class="css-table-cell"> 
-      实际国际运费{{stats.int_shipping}}
-    </div>
-    <label class="css-table-cell">
-      输入实际国际运费总额: 
-      <input type="number" min="1" step="any"
-          ng-model="stats.actual_int_shipping">
-    </label>
-    <div class="css-table-cell">
-      <input type="button" value="按比例分摊到各订单中" ng-click="breakUp()">
-      <input type="button" value="取消" ng-click="reload()">
-      <input type="button" ng-disabled="!stats.actual_int_shipping"
-          value="保存" ng-click="save()">
-    </div>
 	  <label class="css-table-cell">显示汇总 
 	    <input type="checkbox" ng-model="stats.showStats">
 	  </label>
@@ -85,7 +62,7 @@
   <hr>
 </div>
 <h3>订单列表</h3>
-<div ng-repeat="order in orders | filter: {id: orderId, phone: tel, class_name: className} | orderBy: '-created_time'"
+<div ng-repeat="order in orders | filter: {id: orderId, phone: tel} | orderBy: '-created_time'"
     class="section order-details-line">
   <order-details order="order" admin="{{admin}}"
       on-cancel="remove(order)" on-update="update(order)" user="user"

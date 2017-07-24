@@ -20,8 +20,7 @@
         </iron-icon>
         <div ng-if="showDesc" class="wechat-msg section">
 （<span ng-repeat="item in order.items">{{item.count}}个{{item.short_name || item.name}}，</span>
-共{{order.count}}个产品）地址：{{order.stateLabel}} {{order.city}} {{order.street}} {{order.name}}
-{{order.zip}} {{order.phone}}
+共{{order.count}}个产品）地址：{{order.street}} {{order.name}} {{order.zip}} {{order.phone}}
         </div>
       </div>
       <div ng-if="!order.status && hasSelection()" class="padded-element">
