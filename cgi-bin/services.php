@@ -219,7 +219,7 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     $response = update_course($_POST); 
   } elseif ($resource_id == "user") {
     if (!isSysAdmin($user) || intval($_POST["id"]) == intval($user->id)) {
-      $response = ["updated" => 1];
+      $response = ["updated" => 0];
     } else {
       $result = update_user($_POST);
       if ($result && $result->id == $user->id) {
