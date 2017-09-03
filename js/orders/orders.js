@@ -93,6 +93,7 @@ define('orders/orders', [
                 item.short_name = info.short_name;
                 item.producer = info.producer;
                 item.int_shipping = info.int_shipping;
+                item.unit = info.unit;
               }
               order.count += parseInt(item.count);
               order.int_shipping_estmt += 
