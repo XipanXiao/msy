@@ -57,7 +57,7 @@
           href="http://www.kjkd.com/customer/oddtracking?txtbill={{order.usps_track_id}}">
         包裹跟踪（快捷）
       </a>
-      <a ng-if="order.usps_track_id" target="_blank"
+      <a ng-if="order.usps_track_id && order.usps_track_id.startsWith('535')" target="_blank"
           href="http://www.zto.com/GuestService/BillNew?txtBill={{order.usps_track_id}}">
         包裹跟踪（中通）
       </a>
