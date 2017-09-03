@@ -76,7 +76,9 @@ function get_orders($user_id, $filters, $withItems, $withAddress) {
   }
   
   $fields = ["id", "user_id", "status", "sub_total", "paid", "shipping",
-      "int_shipping", "shipping_date", "paid_date", "created_time", "name"];
+      "int_shipping", "shipping_date", "paid_date", "created_time", "name",
+  		"usps_track_id"
+  ];
   $address_fields = 
       ["phone", "email", "street", "city", "state", "country", "zip"];
   
