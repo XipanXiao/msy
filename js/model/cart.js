@@ -6,14 +6,17 @@ define('model/cart', [], function() {
     subTotal: 0.0,
     shipping: 0.0,
     items: {},
+    userLevel: 0,
     isEmpty: true,
     add: function(item) {
       var existing = this.items[item.id];
       if (existing) {
         existing.count++;
       } else {
+        item = utils.mix_in({}, item);
         item.count = 1;
-        this.items[item.id] = utils.mix_in({}, item);
+        this._updatePrice(item);
+        this.items[item.id] = item;
       }
       this.update();
     },
@@ -21,12 +24,14 @@ define('model/cart', [], function() {
       delete this.items[id];
       this.update();
     },
+    _updatePrice: function(item) {
+      item.price = item['cost' + this.userLevel];
+    },
     // Change prices of the items in the cart, based on user privilege.
     changePrice: function(level) {
-      var priceField = level ? 'cost' + level : 'price';
+      this.userLevel = level;
       for (var id in this.items) {
-        var item = this.items[id];
-        item.price = item[priceField];
+        this._updatePrice(this.items[id]);
       }
       this.update();
     },

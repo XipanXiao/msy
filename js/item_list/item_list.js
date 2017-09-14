@@ -25,6 +25,7 @@ define('item_list/item_list', ['flying/flying', 'services', 'utils'], function()
             return rpc.get_items().then(function(response) {
               scope.items = [];
               utils.forEach(response.data, function(item) {
+                item.cost0 = item.price;
                 scope.items.push(item);
               });
               return scope.items;
