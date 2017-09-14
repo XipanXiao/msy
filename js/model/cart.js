@@ -13,12 +13,21 @@ define('model/cart', [], function() {
         existing.count++;
       } else {
         item.count = 1;
-        this.items[item.id] = item;
+        this.items[item.id] = utils.mix_in({}, item);
       }
       this.update();
     },
     remove: function(id) {
       delete this.items[id];
+      this.update();
+    },
+    // Change prices of the items in the cart, based on user privilege.
+    changePrice: function(level) {
+      var priceField = level ? 'cost' + level : 'price';
+      for (var id in this.items) {
+        var item = this.items[id];
+        item.price = item[priceField];
+      }
       this.update();
     },
     update: function() {
@@ -65,6 +74,7 @@ define('model/cart', [], function() {
         order.items.push({
           item_id: item.id,
           price: item.price,
+          cost: refill ? 0 : item.cost,
           count: refill ? (-item.count) : item.count
         });
       }

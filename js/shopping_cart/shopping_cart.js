@@ -14,6 +14,10 @@ define('shopping_cart/shopping_cart', [
           scope.confirming = false;
           scope.addrEditor = {};
           
+          scope.$watch("user.level", function(level) {
+            scope.cart.changePrice(parseInt(level) || 0);
+          });
+          
           scope.checkOut = function() {
             if (!scope.confirming) {
               scope.confirming = true;
