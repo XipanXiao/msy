@@ -7,7 +7,8 @@
       <div class="css-table-cell">产品</div>
       <div class="css-table-cell">进价</div>
       <div class="css-table-cell">零售价</div>
-      <div class="css-table-cell">库存</div>
+      <div class="css-table-cell">中国库存</div>
+      <div class="css-table-cell"></div>
       <div class="css-table-cell">美国库存</div>
       <div class="css-table-cell">类别</div>
       <div class="css-table-cell"></div>
@@ -18,6 +19,14 @@
       <div class="css-table-cell">¥{{item.cost}}</div>
       <div class="css-table-cell">¥{{item.price}}</div>
       <div class="css-table-cell">{{item.inventory_cn}}</div>
+      <div class="css-table-cell">
+        <iron-icon icon="arrow-back" ng-click="move(item, -1)" title="搬到中国"
+            class="clickable">
+        </iron-icon>
+        <iron-icon icon="arrow-forward" ng-click="move(item, +1)"
+            title="搬到美国" class="clickable">
+        </iron-icon>
+      </div>
       <div class="css-table-cell">{{item.inventory_us}}</div>
       <div class="css-table-cell">{{categories[item.category].name}}</div>
       <div class="css-table-cell">

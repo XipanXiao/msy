@@ -43,6 +43,20 @@ define('inventory/inventory', [
             scope.cart.add(inventryItem);
           };
           
+          /// Moves inventory between China and US.
+          /// 
+          /// If [direction] is -1, move to China.
+          /// Otherwise if it is 1, move to US.
+          scope.move = function(item, direction) {
+            var cn = parseInt(item.inventory_cn) - direction;
+            var us = parseInt(item.inventory_us) + direction;
+            if (cn < 0 || us < 0) return;
+            
+            item.inventory_cn = cn;
+            item.inventory_us = us;
+            scope.save(item);
+          };
+          
           function reload() {
             utils.requestOneByOne([getCategories, getItems]);
           }
