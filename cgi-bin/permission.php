@@ -23,6 +23,10 @@ function isOrderManager($user) {
   return ($user->permission & 0x103) == 0x103;
 }
 
+function isAgent($user) {
+  return ($user->permission & 0x7) == 0x7;
+}
+
 function canGrant($user, $perm) {
   return ($user->permission & $perm) == $perm;	
 }
@@ -33,6 +37,16 @@ function canReadOrderAddress($user) {
 
 function get_student_permission() {
   return 3;
+}
+
+function canReadOrder($user, $order) {
+  return $user->id == intval($order["agent_id"]) ||
+      $user->id == intval($order["user_id"]) ||
+      isSysAdmin($user);
+}
+
+function canWriteOrder($user, $order) {
+	return $user->id == intval($order["agent_id"]) || isSysAdmin($user);
 }
 
 function canRead($user, $classInfo) {

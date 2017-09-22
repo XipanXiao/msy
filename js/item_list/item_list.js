@@ -26,6 +26,7 @@ define('item_list/item_list', ['flying/flying', 'services', 'utils'], function()
               scope.items = [];
               utils.forEach(response.data, function(item) {
                 item.cost0 = item.price;
+                item.cost = item['cost' + scope.user.level];
                 scope.items.push(item);
               });
               return scope.items;
@@ -38,6 +39,7 @@ define('item_list/item_list', ['flying/flying', 'services', 'utils'], function()
           
           scope.$watch('user', function(user) {
             if (user) {
+              scope.showCost = parseInt(user.level);
               utils.requestOneByOne([getCategories, getItems]);
             }
           });

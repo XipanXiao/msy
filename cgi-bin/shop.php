@@ -28,26 +28,6 @@ function _canClose($order) {
   return $order["status"] == OrderStatus::COMPLETED;
 }
 
-/// Returns an array of class ID's managed by [$user].
-function _getManagedClasses($user) {
-  if (isYearLeader($user)) {
-    global $medoo;
-    return $medoo->select("classes", "id",
-        ["start_year" => $user->classInfo["start_year"]]);
-  }
-  if (isClassLeader($user, $user->classId)) return $user->classId;
-  return null;
-}
-
-/// Returns department level.
-function _getDepartmentLevel($user) {
-  global $medoo;
-  
-  $departments = keyed_by_id($medoo->select("departments", ["id", "level"]));
-  $department = $departments[$user->classInfo["department_id"]];
-  return $department ? $department["level"] : 0;
-}
-
 function get_order($id) {
   global $medoo;
   
@@ -60,7 +40,7 @@ function get_order($id) {
   return $order;
 }
 
-function get_orders($user_id, $filters, $withItems, $withAddress) {
+function get_orders($user_id, $filters, $withItems) {
   global $medoo;
   
   $timeFilter = ["created_time[><]" => [$filters["start"], $filters["end"]]];
@@ -68,6 +48,9 @@ function get_orders($user_id, $filters, $withItems, $withAddress) {
       ? ["status" => intval($filters["status"])]
       : [];
   $userFilter = $user_id ? ["user_id" => $user_id] : [];
+  if (!empty($filters["agent_id"])) {
+    $userFilter["agent_id"] = $filters["agent_id"];
+  }
   $classFilter = [];
   if (empty($userFilter) && !empty($filters["class_id"])) {
     $userIds = $medoo->select("users", "id", 
@@ -77,14 +60,12 @@ function get_orders($user_id, $filters, $withItems, $withAddress) {
   
   $fields = ["id", "user_id", "status", "sub_total", "paid", "shipping",
       "int_shipping", "shipping_date", "paid_date", "created_time", "name",
-  		"usps_track_id"
+      "usps_track_id", "agent_id"
   ];
   $address_fields = 
       ["phone", "email", "street", "city", "state", "country", "zip"];
   
-  if ($withAddress) {
-    $fields = array_merge($fields, $address_fields);
-  }
+  $fields = array_merge($fields, $address_fields);
 
   $orders = $medoo->select("orders", $fields, ["AND" => 
       array_merge($userFilter, $statusFilter, $timeFilter, $classFilter)]); 
@@ -206,30 +187,13 @@ function update_order($order, $is_manager) {
   return $medoo->update("orders", $data, ["id" => $order["id"]]);
 }
 
-function sanitize_address() {
-  if (!is_country_code($_POST["country"])) return null;
-
-  $data = [];
-  foreach (["name", "phone", "street", "city", "zip"] as $key) {
-    $data[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_STRING,
-        FILTER_REQUIRE_SCALAR);
-    if (empty($data[$key])) exit();
-  }
-  return $data;
-}
-
-function get_shop_items($category) {
+function get_shop_items() {
   global $medoo;
-
-  $filters = [];
-  if ($category) {
-    $filters["category"] = $category; 
-  }
 
   return keyed_by_id($medoo->select("items", "*", $filters));
 }
 
-function get_item_categories($level) {
+function get_item_categories() {
   global $medoo;
 
   return keyed_by_id($medoo->select("item_categories", "*"));
@@ -249,67 +213,6 @@ function update_order_item($item) {
   return $medoo->update("order_details", 
       build_update_data(["price", "count"], $item), 
       ["id" => $item["id"]]);
-}
-
-function get_order_stats($year) {
-  global $medoo;
-
-  $classes = keyed_by_id($medoo->select("classes", ["id", "name"], 
-      ["start_year" => $year]));
-  
-  if (empty($classes)) return [];
-  
-  foreach ($classes as $classId => $classInfo) {
-    $userIdSql = sprintf("SELECT id FROM users WHERE classId=%d",
-        intval($classId)); 
-    $orderIdSql = sprintf("SELECT id FROM orders WHERE user_id IN (%s)",
-        $userIdSql);
-    $sql = sprintf("SELECT item_id, price, sum(count) as group_count FROM ".
-        "order_details WHERE order_id IN (%s) GROUP BY item_id;", $orderIdSql);
-    $stats = $medoo->query($sql)->fetchAll();
-    
-    if (empty($stats)) {
-      unset($classes[$classId]);
-    } else {
-      $classInfo["stats"] = keyed_by_id($stats, "item_id");
-      $classes[$classId] = $classInfo;
-    }
-  }
-  return $classes;
-}
-
-function merge_orders($order_ids) {
-  global $medoo;
-
-  $orders = $medoo->select("orders", "*", ["id" => $order_ids]);
-  if (sizeof($orders) < 2) return;
-  
-  $first_order = array_shift($orders);
-  $id = $first_order["id"];
-  $user_id = $first_order["user_id"];
-  $status = $first_order["status"];
-  
-  foreach ($orders as $index => $order) {
-    if ($order["user_id"] != $user_id || $order["status"] != $status ||
-        !same_address($first_order, $order)) continue;
-    
-    $first_order["sub_total"] += $order["sub_total"];
-    $first_order["paid"] += $order["paid"];
-    $first_order["shipping"] += $order["shipping"];
-    $first_order["int_shipping"] += $order["int_shipping"];
-    
-    if ($medoo->update("order_details", ["order_id" => $id], 
-        ["order_id" => $order["id"]])) {
-      $medoo->delete("orders", ["id" => $order["id"]]);    
-    }
-  }
-
-  $data = ["sub_total" => $first_order["sub_total"], 
-      "paid" => $first_order["paid"], 
-      "shipping" => $first_order["shipping"],
-      "int_shipping" => $first_order["int_shipping"]
-  ];
-  return ["updated" => $medoo->update("orders", $data, ["id" => $id])];
 }
 
 /// Moves selected items from [$fromOrder] to [$toOrder].
@@ -375,67 +278,6 @@ function delete_order_item($id) {
   return 1;
 }
 
-function get_book_list($dep_id, $term, $classId) {
-  global $medoo;
-
-  if (!$dep_id && !$term) {
-    $classes = $medoo->select("classes", "*", ["id" => intval($classId)]);
-    if (empty($classes)) return [];
-
-    $classInfo = current($classes);
-    $dep_id = $classInfo["department_id"];
-    $term = $classInfo["term"];
-  }
-  return $medoo->select("book_lists", "item_id", ["AND" =>
-      ["department_id" => intval($dep_id), "term" => intval($term)]]);
-}
-
-function update_book_list($bookList) {
-  global $medoo;
-  
-  $where = build_update_data(["department_id", "term"], $bookList);
-
-  $updated = $medoo->delete("book_lists", ["AND" => $where]);
-  if (empty($bookList["bookIds"])) return $updated;
-
-  foreach ($bookList["bookIds"] as $bookId) {
-    $data = array_merge([], $where, ["item_id" => $bookId]);
-    $medoo->insert("book_lists", $data);
-    $updated++;
-  }
-  return $updated;
-}
-
-function remove_book_list($depId, $term) {
-  global $medoo;
-  
-  return $medoo->delete("book_lists", 
-      ["AND" => ["department_id" => $depId, "term" => $term]]);
-}
-
-function get_class_book_lists($year) {
-  global $medoo;
-  
-  return keyed_by_id($medoo->select("classes", ["id", "name",
-      "department_id", "term"], ["start_year" => $year]));
-}
-
-function update_class_term($classInfo) {
-  global $medoo;
-
-  return $medoo->update("classes", ["term" => intval($classInfo["term"])],
-      ["id" => intval($classInfo["id"])]);
-}
-
-function get_requested_level($user, $request) {
-  if (!is_numeric($request["level"])) return _getDepartmentLevel($user);
-
-  $requestedLevel = intval($request["level"]);
-  return isOrderManager($user)
-      ? $requestedLevel
-      : min([_getDepartmentLevel($user), $requestedLevel]);
-}
-
 $response = null;
 
 if (empty($_SESSION["user"])) {
@@ -452,41 +294,23 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
       $order = get_order($_GET["order_id"]);
       if (!$order) {
         $response = "{}";
-      } elseif (isOrderManager($user) || $order["user_id"] == $user->id) {
+      } elseif (canReadOrder($user, $order)) {
         $response = $order;
       } else {
         $response = permision_denied_error();
       }
-    } elseif (empty($_GET["student_id"])) {
-      if (isOrderManager($user)) {
-        $response = get_orders(null, $_GET, $_GET["items"], 
-            canReadOrderAddress($user));
-      } else {
-        $classIds = _getManagedClasses($user);
-        $response = $classIds ? get_orders(null, 
-            array_merge($_GET, ["class_id" => $classIds]), 
-            $_GET["items"],
-            TRUE) : permision_denied_error();
-      }
     } else {
-      $response = $_GET["student_id"] == $user->id
-      ? get_orders($user->id, $_GET, $_GET["items"], canReadOrderAddress($user))
-      : permision_denied_error();
+      if (isAgent($user)) {
+        $response = get_orders(null, 
+            array_merge(["agent_id" => $user->id], $_GET), $_GET["items"]); 
+      } else {
+        $response = get_orders($user->id, $_GET, $_GET["items"]);
+      }
     }
   } elseif ($resource_id == "items") {
-    $response = get_shop_items($_GET["category"]);
+    $response = get_shop_items();
   } elseif ($resource_id == "item_categories") {
-    $response = get_item_categories(get_requested_level($user, $_GET));
-  } elseif ($resource_id == "order_stats") {
-    $response = isOrderManager($user) 
-        ? get_order_stats($_GET["year"]) 
-        : permision_denied_error();
-  } elseif ($resource_id == "book_lists") {
-    $response = get_book_list($_GET["dep_id"], $_GET["term"], $user->classId); 
-  } elseif ($resource_id == "class_book_lists") {
-    $response = isOrderManager($user) 
-        ? get_class_book_lists($_GET["year"]) 
-        : permision_denied_error();
+    $response = get_item_categories();
   }
 } else if ($_SERVER ["REQUEST_METHOD"] == "POST" && isset ( $_POST ["rid"] )) {
   $resource_id = $_POST["rid"];
@@ -495,28 +319,29 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
   if ($resource_id == "orders") {
     $order = $_POST;
     validate_order_post();
-    if ($order["user_id"] != $user->id && !isOrderManager($user)) {
+    if ($order["user_id"] != $user->id && !isAgent($user)) {
       $response = permision_denied_error();
     } elseif (empty($order["id"])) {
+      $order["agent_id"] = $user->id;
       $response = ["updated" => place_order($order)];
     } else {
-      $response = ["updated" => update_order($order, isOrderManager($user))];
+      $existing = get_single_record($medoo, "orders", $order["id"]);
+      $response = canWriteOrder($user, $existing) 
+          ? ["updated" => update_order($order, isAgent($user))]
+          : permision_denied_error();
     }
   } elseif ($resource_id == "move_items") {
-    $response = isOrderManager($user)
-      ? ["updated" => 
-          move_order_items($_POST["from_order"], $_POST["to_order"])]
+  	$from = $_POST["from_order"];
+  	$to = $_POST["to_order"];
+    $response = canWriteOrder($user, $to)
+      ? ["updated" => move_order_items($from, $to)]
       : permision_denied_error();
   } elseif ($resource_id == "order_details") {
-    $response = isOrderManager($user)
+    $response = isAgent($user)
       ? ["updated" => update_order_item($_POST)]
       : permision_denied_error();
-  } elseif ($resource_id == "class_book_lists") {
-    $response = isOrderManager($user)
-      ? ["updated" => update_class_term($_POST)]
-      : permision_denied_error();
   } elseif ($resource_id == "items") {
-    $response = isOrderManager($user)
+    $response = isSysAdmin($user)
         ? ["updated" => update_item($_POST)]
         : permision_denied_error();
   }
@@ -527,25 +352,25 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
 
   $record = get_single_record($medoo, $resource_id, $_REQUEST["id"]);
   error_log($user->email ." DELETE ". json_encode($record));
-  if (!isOrderManager($user)) {
-    $response = permision_denied_error();
-  } elseif ($resource_id == "orders") {
-    if (floatval($record["paid"]) >= 0.01 || 
-        !empty($record["paypal_trans_id"]) || 
-        !empty($record["usps_track_id"])) {
-      $response = ["error" => "order is paid or shipped"];
+  if ($resource_id == "orders") {
+    if (!canWriteOrder($user, $record)) {
+      $response = permision_denied_error();
     } else {
-      $response = ["deleted" => delete_order($_REQUEST["id"])];
+      if (floatval($record["paid"]) >= 0.01 || 
+          !empty($record["paypal_trans_id"]) || 
+          !empty($record["usps_track_id"])) {
+        $response = ["error" => "order is paid or shipped"];
+      } else {
+        $response = ["deleted" => delete_order($_REQUEST["id"])];
+      }
     }
   } elseif ($resource_id == "order_details") {
-    $response = ["deleted" => delete_order_item($_REQUEST["id"])];
-  } elseif ($resource_id == "book_lists") {
-    $response = 
-        ["deleted" => remove_book_list($_REQUEST["dep_id"], $_REQUEST["term"])];
-  } elseif ($resource_id == "book_list_details") {
-    $response = ["deleted" => remove_list_detail($_REQUEST["id"])];
-  } elseif ($resource_id == "class_book_lists") {
-    $response = ["deleted" => remove_class_book_list($_REQUEST["id"])];
+    $order = get_single_record($medoo, "orders", $record["order_id"]);
+    if (!canWriteOrder($user, $order)) {
+      $response = permision_denied_error();
+    } else {
+      $response = ["deleted" => delete_order_item($_REQUEST["id"])];
+    }
   }
 }
 
