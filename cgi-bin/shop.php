@@ -79,22 +79,32 @@ function get_orders($user_id, $filters, $withItems) {
   return $orders;
 }
 
-function update_inventory($itemDetail, $countryCode, $negative = false) {
+function get_inventory($agent_id) {
   global $medoo;
   
-  $id = $itemDetail["item_id"];
+  return $medoo->select("inventory", "*", ["agent_id" => $agent_id]);
+}
+
+function update_inventory($agent_id, $itemDetail, $countryCode,
+    $negative = false) {
+  global $medoo;
+  
+  $item_id = $itemDetail["item_id"];
   $delta = intval($itemDetail["count"]);
   if ($negative) {
     $delta = -$delta;
   }
 
-  $field = "inventory_". strtolower($countryCode);
-  $items = $medoo->select("items", ["id", $field], ["id" => $id]);
-  if (empty($items)) return 0;
-  
-  $item = current($items);
-  $item[$field] = intval($item[$field]) + $delta;
-  return update_item($item);
+  $data = ["agent_id" => intval($agent_id), "item_id" => intval($item_id), 
+      "country" => $countryCode];
+  $records = $medoo->select("inventory", "*", ["AND" => $data]);
+
+  if (empty($records)) {
+    return $medoo->insert("inventory", array_merge($data, ["count" => $delta]));
+  } else {
+    return $medoo->update("inventory", ["count[+]" => $delta],
+        ["AND" => $data]);
+  }
 }
 
 function place_order($order) {
@@ -110,7 +120,7 @@ function place_order($order) {
     unset($item["id"]);
     $item["order_id"] = $id;
     if ($medoo->insert("order_details", $item)) {
-      update_inventory($item, $order["country"], true);
+      update_inventory($order["agent_id"], $item, $order["country"], true);
     }
   }
   return $id;
@@ -134,22 +144,21 @@ function close_order($id) {
   return $medoo->delete("orders", ["id" => $id]);
 }
 
-function get_order_country_code($id) {
+function delete_order($id) {
   global $medoo;
 
   $order = get_single_record($medoo, "orders", $id);
-  return $order ? $order["country"] : null;
-}
-function delete_order($id) {
-  global $medoo;
+  if ($order == null) return 0;
 
   $items = $medoo->select("order_details", ["item_id", "count"],
       ["order_id" => $id]);
   if (!empty($items)) {
-    $countryCode = get_order_country_code($id);
     $medoo->delete("order_details", ["order_id" => $id]);
+
+    $agent_id = $order["agent_id"];
+    $country = $order["country"];
     foreach ($items as $item) {
-      update_inventory($item, $countryCode);
+      update_inventory($agent_id, $item, $country);
     }
   }
   return $medoo->delete("orders", ["id" => $id]);
@@ -271,8 +280,8 @@ function delete_order_item($id) {
   if (!$item) return 0;
   
   if ($medoo->delete("order_details", ["id" => $id])) {
-    $countryCode = get_order_country_code($item["order_id"]);
-    update_inventory($item, $countryCode);
+    $order = get_single_record($medoo, "orders", $item["order_id"]);
+    update_inventory($order["agent_id"], $item, $order["country"]);
   }
 
   return 1;
@@ -311,6 +320,8 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     $response = get_shop_items();
   } elseif ($resource_id == "item_categories") {
     $response = get_item_categories();
+  } elseif ($resource_id == "inventory") {
+    $response = get_inventory($user->id);
   }
 } else if ($_SERVER ["REQUEST_METHOD"] == "POST" && isset ( $_POST ["rid"] )) {
   $resource_id = $_POST["rid"];
@@ -331,8 +342,8 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
           : permision_denied_error();
     }
   } elseif ($resource_id == "move_items") {
-  	$from = $_POST["from_order"];
-  	$to = $_POST["to_order"];
+    $from = $_POST["from_order"];
+    $to = $_POST["to_order"];
     $response = canWriteOrder($user, $to)
       ? ["updated" => move_order_items($from, $to)]
       : permision_denied_error();
@@ -344,6 +355,9 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     $response = isSysAdmin($user)
         ? ["updated" => update_item($_POST)]
         : permision_denied_error();
+  } elseif ($resource_id == "inventory") {
+    $response = 
+        ["updated" => update_inventory($user->id, $_POST, $_POST["country"])];
   }
 } elseif ($_SERVER ["REQUEST_METHOD"] == "DELETE" &&
     isset ( $_REQUEST["rid"] )) {

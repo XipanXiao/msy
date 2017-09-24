@@ -32,10 +32,33 @@ define('inventory/inventory', [
             });
           }
           
-          scope.save = function(item) {
-            rpc.update_item({id: item.id, inventory_cn: item.inventory_cn,
-                inventory_us: item.inventory_us});
+          scope.save = function(item, country) {
+            var delta = item['inventory_' + country] -
+                item['saved_inventory_' + country];
+            rpc.update_inventory(item.id, country, delta)
+                .then(function(response) {
+                  if (response.data.updated) {
+                    item['saved_inventory_' + country] = 
+                        item['inventory_' + country];
+                  }
+                });
           };
+
+          function getInventory() {
+            return rpc.get_inventory().then(function(response) {
+              var items = {};
+              scope.items.forEach(function(item) {
+                items[item.id] = item;
+              });
+              (response.data || []).forEach(function(inventory) {
+                var item = items[inventory.item_id];
+                item['inventory_' + inventory.country] =
+                    parseInt(inventory.count);
+                item['saved_inventory_' + inventory.country] =
+                    parseInt(inventory.count);
+              });
+            });
+          }
           
           scope.addToCart = function(item) {
             var inventryItem = utils.mix_in({}, item);
@@ -43,22 +66,8 @@ define('inventory/inventory', [
             scope.cart.add(inventryItem);
           };
           
-          /// Moves inventory between China and US.
-          /// 
-          /// If [direction] is -1, move to China.
-          /// Otherwise if it is 1, move to US.
-          scope.move = function(item, direction) {
-            var cn = parseInt(item.inventory_cn) - direction;
-            var us = parseInt(item.inventory_us) + direction;
-            if (cn < 0 || us < 0) return;
-            
-            item.inventory_cn = cn;
-            item.inventory_us = us;
-            scope.save(item);
-          };
-          
           function reload() {
-            utils.requestOneByOne([getCategories, getItems]);
+            utils.requestOneByOne([getCategories, getItems, getInventory]);
           }
           
           $rootScope.$on('reload-orders', reload);
