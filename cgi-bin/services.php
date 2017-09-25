@@ -107,7 +107,7 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
   } elseif ($resource_id == "courses") {
     $response = get_courses($_GET["group_id"]);
   } elseif ($resource_id == "user_names") {
-    $response = get_user_names($_GET["prefix"]);
+    $response = get_user_names($_GET["prefix"], $user->id);
   } elseif ($resource_id == "users") {
     $id = empty($_GET["id"]) ? null : $_GET["id"];
     $email = empty($_GET["email"]) ? null : $_GET["email"];
