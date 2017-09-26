@@ -28,7 +28,13 @@ define('inventory/inventory', [
           
           function getItems() {
             return rpc.get_items().then(function(response) {
-              return scope.items = utils.toList(response.data);
+              scope.items = [];
+              utils.forEach(response.data, function(item) {
+                item.cost0 = item.price;
+                item.cost = item['cost' + scope.user.level];
+                scope.items.push(item);
+              });
+              return scope.items;
             });
           }
           
