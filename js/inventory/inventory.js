@@ -57,6 +57,7 @@ define('inventory/inventory', [
                 items[item.id] = item;
               });
               (response.data || []).forEach(function(inventory) {
+                inventory.country = (inventory.country || '').toLowerCase();
                 var item = items[inventory.item_id];
                 item['inventory_' + inventory.country] =
                     parseInt(inventory.count);
