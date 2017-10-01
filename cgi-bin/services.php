@@ -218,8 +218,8 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     if (!isYearLeader($user)) return;
     $response = update_course($_POST); 
   } elseif ($resource_id == "user") {
-    if (!isSysAdmin($user) || intval($_POST["id"]) == intval($user->id)) {
-      $response = ["updated" => 0];
+    if (!isAgent($user) && intval($_POST["id"]) != intval($user->id)) {
+      $response = permision_denied_error();
     } else {
       $result = update_user($_POST);
       if ($result && $result->id == $user->id) {

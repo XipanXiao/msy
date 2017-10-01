@@ -345,6 +345,7 @@ function update_user($user) {
     }
   } else {
     $datas["permission"] = get_student_permission();
+    $datas["agent_id"] = get_login_user()->id;
     if ($id = $medoo->insert("users", $datas)) {
       return current(get_users(null, null, intval($id)));
     }

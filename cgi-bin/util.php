@@ -125,4 +125,9 @@ function insertOrUpdate($medoo, $table, $record) {
     return intval($medoo->insert($table, $record));
   }
 }
+
+function get_login_user() {
+  global $user;
+  return $user;
+}
 ?>
