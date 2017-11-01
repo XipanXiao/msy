@@ -43,30 +43,21 @@ function get_order($id) {
 function get_orders($user_id, $filters, $withItems) {
   global $medoo;
   
-  if (!empty($filters["year"])) {
-    $timeFilter = ["YEAR(created_time)" => $filters["year"]];
-  } else {
-    $timeFilter = [];
+  $sql = "SELECT * FROM orders WHERE 1";
+  if ($user_id) {
+    $sql = $sql. sprintf(" AND user_id=%d", $user_id);
+  } elseif (!empty($filters["agent_id"])) {
+    $sql = $sql. sprintf(" AND agent_id=%d", $filters["agent_id"]);
   }
-  $statusFilter = isset($filters["status"]) && $filters["status"] != ""
-      ? ["status" => intval($filters["status"])]
-      : [];
-  $userFilter = $user_id ? ["user_id" => $user_id] : [];
-  if (!empty($filters["agent_id"])) {
-    $userFilter["agent_id"] = $filters["agent_id"];
-  }
-  
-  $fields = ["id", "user_id", "status", "sub_total", "paid", "shipping",
-      "int_shipping", "shipping_date", "paid_date", "created_time", "name",
-      "usps_track_id", "agent_id"
-  ];
-  $address_fields = 
-      ["phone", "email", "street", "city", "state", "country", "zip"];
-  
-  $fields = array_merge($fields, $address_fields);
 
-  $orders = $medoo->select("orders", $fields, ["AND" => 
-      array_merge($userFilter, $statusFilter, $timeFilter)]);
+  if (!empty($filters["year"])) {
+    $sql = $sql. sprintf(" AND YEAR(created_time)=%d", $filters["year"]);
+  }
+  if (isset($filters["status"] && $filters["status"] != "") {
+    $sql = $sql. sprintf(" AND status=%d", $filters["status"]);
+  }
+
+  $orders = $medoo->query($sql. ";")->fetchAll();
   if (!$withItems) return $orders;
 
   foreach ($orders as $index => $order) {
