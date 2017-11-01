@@ -53,7 +53,7 @@ function get_orders($user_id, $filters, $withItems) {
   if (!empty($filters["year"])) {
     $sql = $sql. sprintf(" AND YEAR(created_time)=%d", $filters["year"]);
   }
-  if (isset($filters["status"] && $filters["status"] != "") {
+  if (isset($filters["status"]) && $filters["status"] != "") {
     $sql = $sql. sprintf(" AND status=%d", $filters["status"]);
   }
 
