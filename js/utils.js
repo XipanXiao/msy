@@ -374,7 +374,7 @@ define('utils', [], function() {
         }
       },
       sexLabels: ['女', '男'],
-      levelLabels: ['', '美容顾问', '正品授权', '一级代理', '总监', '官方'],
+      levelLabels: ['', '美容顾问', '正品授权', '一级代理', '总监', '官方', '总监'],
       getDisplayLabel: function(user, key) {
         return this[key+'Labels'][user[key]] || '';
       },
