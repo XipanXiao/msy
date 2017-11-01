@@ -43,7 +43,7 @@ function get_order($id) {
 function get_orders($user_id, $filters, $withItems) {
   global $medoo;
   
-  $sql = "SELECT %s FROM orders WHERE 1".format("id, user_id, agent_id, status, ".
+  $sql = sprintf("SELECT %s FROM orders WHERE 1", "id, user_id, agent_id, status, ".
       "sub_total, paid, shipping, int_shipping, name, email, phone, street, ".
       "city, state, country, zip, usps_track_id, shipping_date, paid_date, ".
       "created_time");
