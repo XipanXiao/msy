@@ -24,9 +24,9 @@ define('services', [], function() {
   return angular.module('ServicesModule', []).factory('rpc', function($http, 
       $httpParamSerializerJQLike) {
     return {
-      get_users: function(email, classId, sn) {
-        return $http.get('{0}?rid=users&email={1}&classId={2}&sn={3}'.
-            format(serviceUrl, email || '', classId || '', sn || ''));
+      get_users: function(email, agentId) {
+        return $http.get('{0}?rid=users&email={1}&agent_id={2}'.
+            format(serviceUrl, email || '', agentId || ''));
       },
       
       getUserById: function(id) {

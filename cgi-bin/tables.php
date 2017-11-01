@@ -260,36 +260,25 @@ function get_user($email) {
   return $user;
 }
 
-function get_users($email, $classId = null, $user_id = null, $sn = null) {
+function get_users($email, $agentId = null, $user_id = null) {
   global $medoo;
 
   $result = null;
-  if ($classId) {
-    $result = $medoo->select("users", "*", ["classId" => $classId]);
+  $fields = ["id", "name", "email", "phone", "street", "city", "country", 
+      "zip", "im", "level"];
+  $where = [];
+  if ($agentId) {
+    $where = ["agent_id" => $agentId];
   } elseif ($email){
-    $result = $medoo->select("users", "*", ["email" => $email]);
+    $where = ["email" => $email];
   } elseif ($user_id) {
-    $result = $medoo->select("users", "*", ["id" => $user_id]);
-  } elseif ($sn) {
-    $result = $medoo->select("users", "*", ["internal_id" => $sn]);
+    $where = ["id" => $user_id];
   }
 
-  if (empty($result)) {
-    return [];
+  $users = $medoo->select("users", $fields, $where);
+  foreach ($users as $index => $user) {
+    $users[$index] = new User($user);
   }
-
-  $classes = ($email || $user_id) ? 
-      get_classes(["id" => $result[0]["classId"]]) : null;
-  $users = array();
-
-  foreach ($result as $index => $row) {
-    $user = new User($row);
-    $user->password = null;
-    $user->classInfo = $classes ? $classes[$user->classId] : null;
-
-    $users[$user->id] = $user;
-  }
-
   return $users;
 }
 

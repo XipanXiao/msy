@@ -119,6 +119,9 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
       }
     } elseif ($id) {
       $response = get_user_by_id($id);
+      unset($response["password"]);
+    } elseif (!empty($_GET["agent_id"])) {
+      $response = get_users(null, $_GET["agent_id"]);
     } else {
       $user = current(get_users($user->email));
       // Refresh the session user data every time the user access the home page.
@@ -239,47 +242,19 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     isset ( $_REQUEST["rid"] )) {
 
   $resource_id = $_REQUEST["rid"];
-  if (!isSysAdmin($user) 
-      && $resource_id != "task_records") {
-    $response = permision_denied_error();
-    echo json_encode($response);
-    exit();
-  }
 
-  if ($resource_id == "course_group") {
-    $response = ["deleted" => remove_course_group($_REQUEST["id"])];
-  } elseif ($resource_id == "schedule_group") {
-    $response = ["deleted" => remove_schedule_group($_REQUEST["id"])];
-  } elseif ($resource_id == "course") {
-    $response = ["deleted" => remove_course($_REQUEST["id"])];
-  } elseif ($resource_id == "schedule") {
-    $response = ["deleted" => remove_schedule($_REQUEST["id"])];
-  } elseif ($resource_id == "class") {
-    $response = ["deleted" => remove_class($_REQUEST["id"])];
-  } elseif ($resource_id == "task") {
-    $response = ["deleted" => remove_task($_REQUEST["id"])];
-  } elseif ($resource_id == "task_records") {
-    $record = get_task_record($_REQUEST["id"]);
-    if (!isAdmin($user) &&
-        (empty($record) || $record["student_id"] != $student_id)) {
-        $response = permision_denied_error();
-    } else {
-      $response = [
-        "deleted" => remove_task_record($_REQUEST["id"]), 
-        "last" => get_last_task_record($student_id, $record["task_id"], 
-            $record["sub_index"])
-      ];
-    }
-  } elseif ($resource_id == "user") {
+  if ($resource_id == "user") {
     $userId = $_REQUEST["id"];
 
     $userToDelete = get_user_by_id($userId);
-    error_log($user->email. " DELETE ". $userToDelete["email"]. " " . $userId);
-    error_log(json_encode($userToDelete));
-
-    $response = ["deleted" => remove_user($userId)];
-  } elseif ($resource_id == "department") {
-    $response = ["deleted" => remove_department($_REQUEST["id"])];
+    if ($user->id == intval($userToDelete["agent_id"])) {
+      error_log($user->email. " DELETE ". $userToDelete["email"]. " ". $userId);
+      error_log(json_encode($userToDelete));
+  
+      $response = ["deleted" => remove_user($userId)];
+    } else {
+      $response = permision_denied_error();
+    }
   }
 }
 

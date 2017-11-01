@@ -23,6 +23,7 @@
     <paper-tab>待付款订单</paper-tab>
     <paper-tab>已完成订单</paper-tab>
     <paper-tab>库存管理</paper-tab>
+    <paper-tab>客户名单</paper-tab>
   </paper-tabs>
   
   <iron-pages selected="0">
@@ -40,6 +41,9 @@
     </div>
     <div>
       <inventory ng-if="pageLoaded[3]" user="user"></inventory>
+    </div>
+    <div>
+      <users ng-if="pageLoaded[4]" agent-id="user.id"></users>
     </div>
   </iron-pages>
 </div>

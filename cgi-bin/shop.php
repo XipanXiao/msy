@@ -43,19 +43,17 @@ function get_order($id) {
 function get_orders($user_id, $filters, $withItems) {
   global $medoo;
   
-  $timeFilter = ["created_time[><]" => [$filters["start"], $filters["end"]]];
+  if (!empty($filters["start"]) && !empty(!filters["end"])) {
+    $timeFilter = ["created_time[<>]" => [$filters["start"], $filters["end"]]];
+  } else {
+  	$timeFilter = [];
+  }
   $statusFilter = isset($filters["status"]) && $filters["status"] != ""
       ? ["status" => intval($filters["status"])]
       : [];
   $userFilter = $user_id ? ["user_id" => $user_id] : [];
   if (!empty($filters["agent_id"])) {
     $userFilter["agent_id"] = $filters["agent_id"];
-  }
-  $classFilter = [];
-  if (empty($userFilter) && !empty($filters["class_id"])) {
-    $userIds = $medoo->select("users", "id", 
-        ["classId" => $filters["class_id"]]);
-    $classFilter = ["user_id" => $userIds];
   }
   
   $fields = ["id", "user_id", "status", "sub_total", "paid", "shipping",
@@ -68,7 +66,7 @@ function get_orders($user_id, $filters, $withItems) {
   $fields = array_merge($fields, $address_fields);
 
   $orders = $medoo->select("orders", $fields, ["AND" => 
-      array_merge($userFilter, $statusFilter, $timeFilter, $classFilter)]); 
+      array_merge($userFilter, $statusFilter, $timeFilter)]);
   if (!$withItems) return $orders;
 
   foreach ($orders as $index => $order) {

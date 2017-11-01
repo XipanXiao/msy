@@ -92,6 +92,7 @@ define('model/cart', [], function() {
           delete user.isNew;
           delete user.id;
         }
+        delete user.password;
         return rpc.update_user(user).then(function(response) {
           var created = response.data.updated;
           if (!created) return order.user_id;

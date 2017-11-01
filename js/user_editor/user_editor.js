@@ -1,11 +1,9 @@
 define('user_editor/user_editor',
     ['services', 'utils',
      'address_editor/address_editor',
-     'bit_editor/bit_editor', 'classes/classes',
      'permission'], function() {
   return angular.module('UserEditorModule', ['ServicesModule',
       'AddressEditorModule',
-      'BitEditorModule', 'ClassesModule',
       'PermissionModule', 'UtilsModule']).directive('userEditor',
           function($rootScope, perm, rpc, utils) {
     return {
@@ -23,22 +21,9 @@ define('user_editor/user_editor',
           return $scope.user && utils.getDisplayLabel($scope.user, key);
         };
 
-        $scope.permissionLabel = perm.permissions;
-        $scope.permissions = perm.lowerPermissions();
-        $scope.isSysAdmin = function() {
-          return perm.isSysAdmin();
+        $scope.isAdmin = function() {
+          return perm.isAdmin();
         };
-
-        $scope.$watch('user', function() {
-          $scope.editing = null;
-          if (!$scope.user || $scope.user.classInfo) return;
-
-          var classId = $scope.user.classId;
-          rpc.get_classes(classId).then(function(response) {
-            $scope.user.classInfo =
-              response.data[classId] || response.data['' + classId];
-          });
-        });
 
         $scope.$watch('editing', function() {
           if (!$scope.editing) return;
@@ -67,12 +52,9 @@ define('user_editor/user_editor',
           }
           
           rpc.update_user(data).then(function(response) {
-            if (response.data.updated && editing == 'classId') {
-              $rootScope.$broadcast('class-updated', user.classId);
-            }
-            
             if (response.data.updated) {
               $scope.editing = null;
+              $scope.user.id = $scope.user.id || response.data.updated.id;
             } else {
               utils.mix_in($scope.user, $scope.originalUser);
               $scope.user.confirm = null;
@@ -80,8 +62,6 @@ define('user_editor/user_editor',
             }
           });
         };
-        
-        $scope.admining = window.location.href.indexOf('admin.html') > 0;
       },
 
       templateUrl : 'js/user_editor/user_editor.html'

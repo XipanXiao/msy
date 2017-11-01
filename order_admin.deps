@@ -6,6 +6,8 @@ js/services.js
 js/permission.js
 js/model/cart.js
 js/address_editor/address_editor.js
+js/user_editor/user_editor.js
+js/users/users.js
 js/editable_label/editable_label.js
 js/search_bar/search_bar.js
 js/app_bar/app_bar.js

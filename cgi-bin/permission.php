@@ -24,7 +24,7 @@ function isOrderManager($user) {
 }
 
 function isAgent($user) {
-  return ($user->permission & 0x7) == 0x7;
+  return $user->level > 0;
 }
 
 function canGrant($user, $perm) {

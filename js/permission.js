@@ -25,7 +25,7 @@ define('permission', ['utils'], function() {
         0: '所有人'
       },
       isAdmin: function() {
-        return this.user && (this.user.permission & 5) == 5;
+        return this.user && (this.user.level > 0);
       },
       /// Class leaders (and below) should see only classes of the same year.
       checkClass: function(user, classInfo) {

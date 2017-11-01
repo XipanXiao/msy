@@ -2,6 +2,7 @@ define('order_admin_app', [
     'app_bar/app_bar',
     'orders/orders',
     'inventory/inventory',
+    'users/users',
     'services',
     'permission',
     'utils'],
@@ -13,6 +14,7 @@ define('order_admin_app', [
       'InventoryModule',
       'ServicesModule',
       'PermissionModule',
+      'UsersModule',
       'UtilsModule',
       ])
       .directive('body', function($rootScope, rpc, perm, utils) {
@@ -21,8 +23,8 @@ define('order_admin_app', [
             rpc.get_user().then(function(user) {
               perm.user = user;
               scope.user = user;
-              if (!perm.isOrderAdmin() && !perm.isAdmin()) {
-                utils.redirect('./index.html');
+              if (!perm.isAdmin()) {
+                utils.redirect('./login.html');
               }
             });
             
