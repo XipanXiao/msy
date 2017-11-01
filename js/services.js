@@ -62,11 +62,9 @@ define('services', [], function() {
       },
       
       get_orders: function(student_id, filters) {
-        var url = ("cgi-bin/shop.php?rid=orders&student_id={0}&start={1}" + 
-            "&end={2}&items={3}&status={4}&class_id={5}").format(
-                student_id || '', filters.start || '', filters.end || '',
-                filters.items || '', filters.status || '',
-                filters.class_id || '');
+        var url = "cgi-bin/shop.php?rid=orders&status={0}&items={1}&year={2}" 
+            .format(filters.status || '', filters.items || '', 
+            filters.year || '');
         return $http.get(url);
       },
       

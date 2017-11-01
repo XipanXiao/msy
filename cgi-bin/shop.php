@@ -43,10 +43,10 @@ function get_order($id) {
 function get_orders($user_id, $filters, $withItems) {
   global $medoo;
   
-  if (!empty($filters["start"]) && !empty($filters["end"])) {
-    $timeFilter = ["created_time[<>]" => [$filters["start"], $filters["end"]]];
+  if (!empty($filters["year"])) {
+    $timeFilter = ["YEAR(created_time)" => $filters["year"]];
   } else {
-  	$timeFilter = [];
+    $timeFilter = [];
   }
   $statusFilter = isset($filters["status"]) && $filters["status"] != ""
       ? ["status" => intval($filters["status"])]
