@@ -1,5 +1,3 @@
 RewriteEngine on
-RewriteBase /
-RewriteRule /index.html$ /order.html [R, L]
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
