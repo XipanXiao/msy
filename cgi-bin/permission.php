@@ -85,8 +85,6 @@ function checkYear($user, $classInfo) {
 }
 
 function getStartPage($user) {
-  if (isAdmin($user)) return "admin.html";
-  if (isOrderManager($user)) return "order_admin.html";
-  return "index.html";
+  return "order.html";
 }
 ?>
