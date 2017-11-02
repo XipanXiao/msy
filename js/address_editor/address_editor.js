@@ -6,6 +6,7 @@ define('address_editor/address_editor', ['services', 'utils'], function() {
         editing: '@',
         user: '=',
         withContact: '@',
+        canCreate: '@',
       },
       link: function(scope) {
         scope.countryLabels = window.countryData.getCountryMap();
@@ -71,7 +72,7 @@ define('address_editor/address_editor', ['services', 'utils'], function() {
         }
       },
 
-      templateUrl : 'js/address_editor/address_editor.html?tag=201706041132'
+      templateUrl : 'js/address_editor/address_editor.html?tag=201711011132'
     };
   });
 });

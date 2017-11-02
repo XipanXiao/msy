@@ -6,6 +6,7 @@ js/services.js
 js/permission.js
 js/address_editor/address_editor.js
 js/search_bar/search_bar.js
+js/user_editor/user_editor.js
 js/app_bar/app_bar.js
 js/flying/flying.js
 js/item_list/item_list.js

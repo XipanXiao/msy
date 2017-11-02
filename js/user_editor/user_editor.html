@@ -5,7 +5,8 @@
         <div class="css-table-cell">姓名</div>
         <div class="css-table-cell">{{user.name}}</div>
         <div class="css-table-cell">
-          <iron-icon class="selectable" icon="chevron-right" ng-click="editing = 'name'">
+          <iron-icon class="selectable" icon="chevron-right" ng-click="editing = 'name'"
+              title="修改姓名">
           </iron-icon>
         </div>          
       </div>
@@ -14,7 +15,7 @@
         <div class="css-table-cell">{{levelLabels[user.level]}}</div>
         <div class="css-table-cell">
           <iron-icon ng-show="isAdmin()" class="selectable" icon="chevron-right"
-              ng-click="editing = 'level'">
+              ng-click="editing = 'level'" title="修改级别">
           </iron-icon>
         </div>          
       </div>
@@ -23,17 +24,16 @@
         <div class="css-table-cell">******</div>
         <div class="css-table-cell">
           <iron-icon class="selectable" icon="chevron-right"
-              ng-click="editing = 'password'">
+              ng-click="editing = 'password'" title="修改密码">
           </iron-icon>
         </div>          
       </div>
-    </div>
-    <div class="css-table">
       <div class="css-table-row padded-element">
-        <div class="css-table-cell">email</div>
+        <div class="css-table-cell">账号</div>
         <div class="css-table-cell">{{user.email}}</div>
         <div class="css-table-cell">
-          <iron-icon class="selectable" icon="chevron-right" ng-click="editing = 'email'">
+          <iron-icon class="selectable" icon="chevron-right"
+              ng-click="editing = 'email'" title="修改登录账号">
           </iron-icon>
         </div> 
       </div>
@@ -41,7 +41,8 @@
         <div class="css-table-cell">电话</div>
         <div class="css-table-cell">{{user.phone}}</div>
         <div class="css-table-cell">
-          <iron-icon class="selectable" icon="chevron-right" ng-click="editing = 'phone'">
+          <iron-icon class="selectable" icon="chevron-right"
+              ng-click="editing = 'phone'" title="修改电话">
           </iron-icon>
         </div>          
       </div>
@@ -49,7 +50,8 @@
         <div class="css-table-cell">微信</div>
         <div class="css-table-cell">{{user.im}}</div>
         <div class="css-table-cell">
-          <iron-icon class="selectable" icon="chevron-right" ng-click="editing = 'im'">
+          <iron-icon class="selectable" icon="chevron-right"
+              ng-click="editing = 'im'" title="修改微信">
           </iron-icon>
         </div>          
       </div>
@@ -59,7 +61,8 @@
           <address-editor user="user"></address-editor>
         </div>
         <div class="css-table-cell">
-          <iron-icon class="selectable" icon="chevron-right" ng-click="editing = 'address'">
+          <iron-icon class="selectable" icon="chevron-right"
+              ng-click="editing = 'address'" title="编辑地址">
           </iron-icon>
         </div>          
       </div>
@@ -80,11 +83,12 @@
           <input type="password" ng-model="user.confirm" autofocus>
           <div ng-if="user.password != user.confirm" class="error">两次输入的密码不匹配</div>
         </div>
-        <address-editor ng-switch-when="address" editing="true" user="user"></address-editor>
+        <address-editor ng-switch-when="address" editing="true" user="user">
+        </address-editor>
         <input ng-switch-when="comments" ng-model="user.comments" type="text" autofocus>
         <div ng-if="error" class="error">{{error}}</div>
       </div>
-      <input type="submit" value="Save" ng-click="save()" class="css-table-cell">
+      <input type="submit" value="保存" ng-click="save()" class="css-table-cell">
     </div>
   </div>
 </div>

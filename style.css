@@ -24,12 +24,16 @@ body.admin {
   padding: 4px 16px;
 }
 
+.app-bar-container {
+  position: relative;
+}
+
 .app-bar {
   background-color: #860200;
   color: white;
+  font-size: 80%;
   height: 40px;
   width: 100%;
-  font-size: 80%;
 }
 
 a.app-bar-link {
@@ -668,4 +672,11 @@ body.white {
 
 .hover-button-row:hover .hover-button {
   visibility: visible;
+}
+
+.profile-editor {
+	position: absolute;
+  right: 0;
+  width: 430px;
+  z-index: 1;
 }

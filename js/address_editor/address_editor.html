@@ -1,7 +1,7 @@
 
 <div ng-switch="editing">
   <div ng-switch-when="true">
-    <div class="padded-element">
+    <div class="padded-element" ng-if="canCreate">
       <label><input type="checkbox" ng-model="user.isNew">新建客户</label>
     </div>
     <div class="css-table">

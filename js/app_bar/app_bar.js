@@ -1,5 +1,7 @@
-define('app_bar/app_bar', ['permission', 'search_bar/search_bar'], function() {
-  return angular.module('AppBarModule', ['PermissionModule', 'SearchBarModule'])
+define('app_bar/app_bar', ['permission', 'search_bar/search_bar', 
+                           'user_editor/user_editor'], function() {
+  return angular.module('AppBarModule', ['PermissionModule', 'SearchBarModule',
+                                         'UserEditorModule'])
     .directive('appBar', function(perm) {
       return {
         scope: {
@@ -26,7 +28,7 @@ define('app_bar/app_bar', ['permission', 'search_bar/search_bar'], function() {
             return location.pathname.endsWith(page);
           };
         },
-        templateUrl : 'js/app_bar/app_bar.html?tag=201706041057'
+        templateUrl : 'js/app_bar/app_bar.html?tag=201711011057'
       };
     });
 });

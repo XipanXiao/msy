@@ -1,13 +1,21 @@
-<div class="app-bar">
-  <div class="right">
-    <a ng-if="!isIn('/order.html')" class="app-bar-link" href="order.html">
-      下单
-    </a>
-    <a ng-if="!isIn('/order_admin.html') && (isOrderAdmin() || isAdmin())"
-        class="app-bar-link" href="order_admin.html">
-      订单管理
-    </a>
-    <span>{{user.name}}</span>
-    <a class="app-bar-link" href="cgi-bin/logout.php">Logout</a>
+<div class="app-bar-container">
+  <div class="app-bar">
+    <div class="right">
+      <a ng-if="!isIn('/order.html')" class="app-bar-link" href="order.html">
+        下单
+      </a>
+      <a ng-if="!isIn('/order_admin.html') && (isOrderAdmin() || isAdmin())"
+          class="app-bar-link" href="order_admin.html">
+        订单管理
+      </a>
+      <a href="javascript:void(0)" ng-click="editingProfile = !editingProfile"
+          class="app-bar-link" title="个人信息">
+        {{user.name}}
+      </a>
+      <a class="app-bar-link" href="cgi-bin/logout.php">Logout</a>
+    </div>
+  </div>
+  <div ng-if="editingProfile" class="profile-editor">
+    <user-editor user="user"></user-editor>
   </div>
 </div>
