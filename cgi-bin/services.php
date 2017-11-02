@@ -224,6 +224,18 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     if (!isAgent($user) && intval($_POST["id"]) != intval($user->id)) {
       $response = permision_denied_error();
     } else {
+      if (!empty($_POST["level"]) && intval($_POST["level"]) > $user->level) {
+        $_POST["level"] = $user->level;
+      } 
+      if (!empty($_POST["permission"])) {
+        $perm = $_POST["permission"];
+        if ($perm < 0) {
+          exit();
+        } elseif ($perm > $user->permission) {
+          $perm = $user->permission;
+        }
+        $_POST["permission"] = $user->permission;
+      } 
       $result = update_user($_POST);
       if ($result && $result->id == $user->id) {
         $user = $result;
@@ -235,8 +247,6 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
         $response["error"] = get_db_error();
       }
     }
-  } elseif ($resource_id == "class_prefs") {
-    update_class_pref($user->id, $_POST);
   }
 } elseif ($_SERVER ["REQUEST_METHOD"] == "DELETE" &&
     isset ( $_REQUEST["rid"] )) {
