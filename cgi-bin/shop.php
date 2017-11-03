@@ -325,7 +325,7 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     if ($order["user_id"] != $user->id && !isAgent($user)) {
       $response = permision_denied_error();
     } elseif (empty($order["id"])) {
-      $order["agent_id"] = $user->id;
+      $order["agent_id"] = isAgent($user) ? $user->id : $user->agent_id;    		
       $response = ["updated" => place_order($order)];
     } else {
       $existing = get_single_record($medoo, "orders", $order["id"]);
