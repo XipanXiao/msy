@@ -52,8 +52,8 @@ define('orders/orders', [
             scope.orders_of_users[order.user_id] = 
               (scope.orders_of_users[order.user_id] || 0) + 1;
             scope.orderIds.push(order.id);
-            scope.classNames[order.class_name] = order.class_name;
             scope.phones[order.phone] = order.phone;
+            scope.names[order.name] = order.name;
           }
           
           function calculate_order_values(order) {
@@ -138,7 +138,7 @@ define('orders/orders', [
 
             scope.orderIds = [];
             scope.phones = {};
-            scope.classNames = {};
+            scope.names = {};
             // How many orders each user has.
             scope.orders_of_users = {};
 
@@ -376,7 +376,7 @@ define('orders/orders', [
           $rootScope.$on('reload-orders', scope.reload);
           scope.$watch('user', scope.reload);
         },
-        templateUrl : 'js/orders/orders.html?tag=201706242314'
+        templateUrl : 'js/orders/orders.html?tag=201711042314'
       };
     });
 });

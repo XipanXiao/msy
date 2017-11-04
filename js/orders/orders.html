@@ -16,6 +16,12 @@
       <option ng-repeat="phone in phones" value="{{phone}}"></option>
     </datalist>
   </label>
+  <label class="css-table-cell" ng-show="orders.length">输入姓名过滤：
+    <input ng-model="name" list="names">
+    <datalist id="names">
+      <option ng-repeat="name in names" value="{{name}}"></option>
+    </datalist>
+  </label>
   </div>
 </div>
 <div ng-if="admin && isOrderAdmin() && orders.length" class="css-table">
@@ -62,7 +68,7 @@
   <hr>
 </div>
 <h3>订单列表</h3>
-<div ng-repeat="order in orders | filter: {id: orderId, phone: tel} | orderBy: '-created_time'"
+<div ng-repeat="order in orders | filter: {id: orderId, phone: tel, name: name} | orderBy: '-created_time'"
     class="section order-details-line">
   <order-details order="order" admin="{{admin}}"
       on-cancel="remove(order)" on-update="update(order)" user="user"
