@@ -267,6 +267,7 @@ define('orders/orders', [
               sub_total: 0.0,
               int_shipping: 0.0,
               paid: 0.0,
+              agent_id: order.agent_id,
               status: order.status,
               user_id: order.user_id,
               name: order.name,
