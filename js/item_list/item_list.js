@@ -9,6 +9,7 @@ define('item_list/item_list', ['flying/flying', 'services', 'utils'], function()
         },
         link: function(scope) {
           scope.items = [];
+          scope.quantities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50];
           scope.selectedCategory = {};
           
           function getCategories() {
@@ -44,7 +45,7 @@ define('item_list/item_list', ['flying/flying', 'services', 'utils'], function()
             }
           });
         },
-        templateUrl : 'js/item_list/item_list.html?tag=201707032246'
+        templateUrl : 'js/item_list/item_list.html?tag=201711042246'
       };
     });
 });

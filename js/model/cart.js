@@ -11,10 +11,10 @@ define('model/cart', [], function() {
     add: function(item) {
       var existing = this.items[item.id];
       if (existing) {
-        existing.count++;
+        existing.count += (item.count || 1);
       } else {
         item = utils.mix_in({}, item);
-        item.count = 1;
+        item.count = (item.count || 1);
         this._updatePrice(item);
         this.items[item.id] = item;
       }
