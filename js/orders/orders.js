@@ -346,6 +346,15 @@ define('orders/orders', [
             return utils.requestOneByOne([updateOrderItem, updateOrder]);
           };
           
+          scope.splitSelectedItem = function(order, item) {
+            function splitItem() {
+              return rpc.split_item(item.id).then(function(response) {
+                return parseInt(response.data.updated);
+              });
+            }
+            utils.requestOneByOne([splitItem, reloadOrderRequest(order)]);
+          };
+          
           function _removeOrderItem(order, item) {
             var removeItem = function() {
               return rpc.remove_order_item(item.id).then(function(response) {
@@ -377,7 +386,7 @@ define('orders/orders', [
           $rootScope.$on('reload-orders', scope.reload);
           scope.$watch('user', scope.reload);
         },
-        templateUrl : 'js/orders/orders.html?tag=201711042314'
+        templateUrl : 'js/orders/orders.html?tag=201711072314'
       };
     });
 });

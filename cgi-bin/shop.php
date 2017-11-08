@@ -216,6 +216,23 @@ function update_order_item($item) {
       ["id" => $item["id"]]);
 }
 
+function split_order_item($item_id) {
+  global $medoo;
+
+  $item = get_single_record($medoo, "order_details", $item_id);
+  if (!$item) return 0;
+
+  $count = $item["count"];
+  if ($count < 2) return 0;
+  
+  $item["count"] = round($count / 2);
+  if (!$medoo->update("order_details", $item, ["id" => $item_id])) return 0;
+
+  unset($item["id"]);
+  $item["count"] = $count - $item["count"];
+  return $medoo->insert("order_details", $item);
+}
+
 /// Moves selected items from [$fromOrder] to [$toOrder].
 ///
 /// "id", "sub_total", "int_shipping" of both orders are required.
@@ -325,7 +342,7 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     if ($order["user_id"] != $user->id && !isAgent($user)) {
       $response = permision_denied_error();
     } elseif (empty($order["id"])) {
-      $order["agent_id"] = isAgent($user) ? $user->id : $user->agent_id;    		
+      $order["agent_id"] = isAgent($user) ? $user->id : $user->agent_id;        
       $response = ["updated" => place_order($order)];
     } else {
       $existing = get_single_record($medoo, "orders", $order["id"]);
@@ -350,6 +367,10 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
   } elseif ($resource_id == "inventory") {
     $response = 
         ["updated" => update_inventory($user->id, $_POST, $_POST["country"])];
+  } elseif ($resource_id == "split_item") {
+    $response = isAgent($user)
+      ? ["updated" => split_order_item($_POST["item_id"])]
+      : permision_denied_error();
   }
 } elseif ($_SERVER ["REQUEST_METHOD"] == "DELETE" &&
     isset ( $_REQUEST["rid"] )) {

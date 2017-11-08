@@ -10,6 +10,7 @@ define('order_details/order_details', [
           admin: '@',
           onCancel: '&',
           onMerge: '&',
+          onSplitItem: '&',
           onRemoveItem: '&',
           onSplit: '&',
           onUpdate: '&',
@@ -24,7 +25,7 @@ define('order_details/order_details', [
             return items.length > 1 && items.some(itemSelected);
           };
         },
-        templateUrl : 'js/order_details/order_details.html?tag=201705312038'
+        templateUrl : 'js/order_details/order_details.html?tag=201711072038'
       };
     });
 });

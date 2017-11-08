@@ -134,6 +134,12 @@ define('services', [], function() {
         return http_form_post($http, $httpParamSerializerJQLike(item),
             'cgi-bin/shop.php');
       },
+
+      split_item: function(item_id) {
+        var data = {rid: 'split_item', item_id: item_id};
+        return http_form_post($http, $httpParamSerializerJQLike(data),
+            'cgi-bin/shop.php');
+      },
       
       update_inventory: function(item_id, country, delta) {
         var data = {

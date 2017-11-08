@@ -1,4 +1,5 @@
 <link rel="import" href="bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="bower_components/iron-icons/communication-icons.html">
 <div class="css-table order-details-header">
   <div class="css-table-row deletable">
     <div class="css-table-cell">
@@ -94,7 +95,11 @@
       ng-class="{'selected': item.selected}"
       ng-click="item.selected = !item.selected">
     <div class="css-table-cell">{{item.name}}</div>
-    <div class="css-table-cell">{{item.count}}</div>
+    <div class="css-table-cell">
+      <editable-label value="item.count"
+          on-change="onUpdateItem({'order': order, 'item': item})">
+      </editable-label>
+    </div>
     <div class="css-table-cell">
       <editable-label value="item.price"
           on-change="onUpdateItem({'order': order, 'item': item})">
@@ -104,6 +109,10 @@
       <iron-icon icon="delete" class="delete-button"
           ng-click="onRemoveItem({'order': order, 'item': item})">
       </iron-icon>
+      <iron-icon ng-if="item.count > 1" icon="communication:call-split"
+        class="delete-button" title="均分所选项"
+        ng-click="onSplitItem({'item': item})">
+      </div>
     </div>
   </div>
 </div>

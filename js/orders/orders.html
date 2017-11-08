@@ -73,6 +73,7 @@
   <order-details order="order" admin="{{admin}}"
       on-cancel="remove(order)" on-update="update(order)" user="user"
       on-merge="merge(order)" on-split="split(order)"
+      on-split-item="splitSelectedItem(order, item)"
       on-remove-item="removeOrderItem(order, item)"
       on-update-item="updateItem(order, item)">
   </order-details>
