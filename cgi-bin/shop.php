@@ -210,10 +210,27 @@ function update_order_item($item) {
   global $medoo;
 
   if (empty($item["id"])) return 0;
+  $id = $item["id"];
 
-  return $medoo->update("order_details", 
-      build_update_data(["price", "count"], $item), 
-      ["id" => $item["id"]]);
+  if (isset($item["price"])) {
+    $updated = $medoo->update("order_details", ["price" => $item["price"]],
+        ["id" => $id]);
+    if ($updated) return $updated;
+  } 
+  if (isset($item["count"])) {
+    $items = keyed_by_id($medoo->select("order_details", ["id", "count"], ["AND" => 
+        ["order_id" => $item["order_id"], "item_id" => $item["item_id"]]
+    ]));
+    if (sizeof($items) != 2) return 0;
+
+    $orgItem = $items[$id];
+    $delta = intval($item["count"]) - intval($orgItem["count"]);
+    unset($items[$id]);
+    $anotherId = end($items)["id"];
+    return $medoo->update("order_details", ["count[+]" => $delta], 
+        ["id" => $id]) + $medoo->update("order_details", 
+            ["count[-]" => $delta], ["id" => $anotherId]);
+  }
 }
 
 function split_order_item($item_id) {

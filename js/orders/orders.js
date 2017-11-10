@@ -343,7 +343,8 @@ define('orders/orders', [
               var data = {id: order.id, sub_total: order.sub_total};
               return rpc.update_order(data);
             };
-            return utils.requestOneByOne([updateOrderItem, updateOrder]);
+            return utils.requestOneByOne([updateOrderItem, updateOrder, 
+                reloadOrderRequest(order)]);
           };
           
           scope.splitSelectedItem = function(order, item) {

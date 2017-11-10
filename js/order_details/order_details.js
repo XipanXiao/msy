@@ -24,6 +24,12 @@ define('order_details/order_details', [
             var items = scope.order.items;
             return items.length > 1 && items.some(itemSelected);
           };
+          scope.isItemSplit = function(itemId) {
+            function combine(total, item) {
+              return total + (item.item_id == itemId ? 1 : 0);
+            }
+            return 2 == scope.order.items.reduce(combine, 0);
+          };
         },
         templateUrl : 'js/order_details/order_details.html?tag=201711072038'
       };

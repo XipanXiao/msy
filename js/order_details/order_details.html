@@ -24,9 +24,8 @@
 共{{order.count}}个产品）地址：{{order.street}} {{order.name}} {{order.zip}} {{order.phone}}
         </div>
       </div>
-      <div ng-if="!order.status && hasSelection()" class="padded-element">
-        <input type="button" value="将所选项拆分到新订单" ng-click="onSplit()">
-      </div>
+      <input ng-if="!order.status && hasSelection()" type="button" 
+          value="将所选项拆分到新订单" ng-click="onSplit()">
     </div>
     <div class="css-table-cell">
       <div>金额: ${{order.sub_total}}</div>
@@ -95,10 +94,11 @@
       ng-class="{'selected': item.selected}"
       ng-click="item.selected = !item.selected">
     <div class="css-table-cell">{{item.name}}</div>
-    <div class="css-table-cell">
-      <editable-label value="item.count"
+    <div class="css-table-cell" ng-switch="isItemSplit(item.item_id)">
+      <editable-label ng-switch-when="true" value="item.count"
           on-change="onUpdateItem({'order': order, 'item': item})">
       </editable-label>
+      <span ng-switch-default>{{item.count}}</span>
     </div>
     <div class="css-table-cell">
       <editable-label value="item.price"
