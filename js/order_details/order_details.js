@@ -31,7 +31,7 @@ define('order_details/order_details', [
             return 2 == scope.order.items.reduce(combine, 0);
           };
         },
-        templateUrl : 'js/order_details/order_details.html?tag=201711072038'
+        templateUrl : 'js/order_details/order_details.html?tag=201711092038'
       };
     });
 });
