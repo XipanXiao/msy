@@ -12,6 +12,7 @@ define('order_details/order_details', [
           onMerge: '&',
           onSplitItem: '&',
           onRemoveItem: '&',
+          onMoveItem: '&',
           onSplit: '&',
           onUpdate: '&',
           onUpdateItem: '&',
@@ -30,8 +31,36 @@ define('order_details/order_details', [
             }
             return 2 == scope.order.items.reduce(combine, 0);
           };
+          /// Given the selected row at [element], finds the containing order
+          /// id.
+          function findOrderId(element) {
+            var isContainerTable = function(element) {
+              return element.id && element.className.indexOf('css-table ') >= 0;
+            };
+            while (element && !isContainerTable(element)) {
+              element = element.parentElement;
+            }
+            return element.id;
+          }
+          /// Sets the data to be dropped as the order id.
+          window.dragItem = function(event) {
+            event.dataTransfer.setData("text", findOrderId(event.target));
+          };
+          /// Drops selected items from the from order to the target order.
+          window.dropItem = function(event) {
+            event.preventDefault();
+            var fromId = parseInt(event.dataTransfer.getData("text"));
+            var toId = parseInt(findOrderId(event.target));
+            if (fromId == toId) return;
+
+            scope.onMoveItem({'fromId': fromId, 'toId': toId});
+            scope.$apply();
+          };
+          window.allowDrop = function(event) {
+            event.preventDefault();
+          };
         },
-        templateUrl : 'js/order_details/order_details.html?tag=201711092038'
+        templateUrl : 'js/order_details/order_details.html?tag=201711112038'
       };
     });
 });

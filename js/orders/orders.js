@@ -356,6 +356,23 @@ define('orders/orders', [
             utils.requestOneByOne([splitItem, reloadOrderRequest(order)]);
           };
           
+          scope.moveSelectedItem = function(fromId, toId) {
+            function getOrder(id) {
+              for (var index in scope.orders) {
+                if (scope.orders[index].id == id) return scope.orders[index];
+              }
+            }
+            var fromOrder = getOrder(fromId);
+            var toOrder = getOrder(toId);
+            if (fromOrder.user_id != toOrder.user_id) {
+              alert('只能在同一客户的不同订单之间移动商品');
+              return;
+            }
+            var move = moveItemsRequest(fromOrder, toOrder);
+            utils.requestOneByOne([move, reloadOrderRequest(fromOrder), 
+                reloadOrderRequest(toOrder)]);
+          };
+          
           function _removeOrderItem(order, item) {
             var removeItem = function() {
               return rpc.remove_order_item(item.id).then(function(response) {
@@ -387,7 +404,7 @@ define('orders/orders', [
           $rootScope.$on('reload-orders', scope.reload);
           scope.$watch('user', scope.reload);
         },
-        templateUrl : 'js/orders/orders.html?tag=201711072314'
+        templateUrl : 'js/orders/orders.html?tag=201711112314'
       };
     });
 });

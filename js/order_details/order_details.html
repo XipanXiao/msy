@@ -88,11 +88,13 @@
     </div>
   </div>
 </div>
-<div class="css-table shopping-cart-list">
+<div class="css-table shopping-cart-list" ondrop="dropItem(event)"
+    ondragover="allowDrop(event)" id="{{order.id}}-order">
   <div ng-repeat="item in order.items"
       class="css-table-row selectable deletable"
       ng-class="{'selected': item.selected}"
-      ng-click="item.selected = !item.selected">
+      ng-click="item.selected = !item.selected"
+      draggable="{{item.selected}}" ondragstart="dragItem(event)">
     <div class="css-table-cell">{{item.name}}</div>
     <div class="css-table-cell" ng-switch="isItemSplit(item.item_id)">
       <editable-label ng-switch-when="true" value="item.count"
