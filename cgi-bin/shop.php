@@ -191,7 +191,7 @@ function update_order($order, $is_manager) {
 function get_shop_items() {
   global $medoo;
 
-  return keyed_by_id($medoo->select("items", "*", $filters));
+  return keyed_by_id($medoo->select("items", "*"));
 }
 
 function get_item_categories() {

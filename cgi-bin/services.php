@@ -15,43 +15,6 @@ if (empty($_SESSION["user"])) {
 
 $student_id = $user->id;
 
-function get_class_info($classId) {
-  global $user;
-  $classInfo = null;
-  if ($classId == $user->classId) {
-    $classInfo = $user->classInfo;
-  } else {
-    $classes = get_classes(["id" => $classId]);
-    if (!empty($classes)) {
-      $classInfo = $classes[$classId];
-    }
-  }
-  return $classInfo;
-}
-
-function canReadClass($classInfo) {
-  global $user;
-  return canRead($user, $classInfo);
-}
-
-function canWriteClass($user, $classId) {
-  $classInfo = get_classes(["id" => $classId])[$classId];
-  if (!classInfo) return false;
-
-  return canWrite($user, $classInfo);
-}
-
-/// Whether [$user] can report task for [$task_user_id].
-function canWriteUser($user, $targetUser) {
-  if ($user->id == $targetUser) return true;
-
-  if (!($targetUser instanceof User)) {
-    $targetUser = get_users(null, null, $targetUser)[$targetUser];
-    if (!$targetUser) return false;
-  }
-  return canWrite($user, $targetUser->classInfo);
-}
-
 /// Whether the current [$user] has permission to read [$another] or not.
 function canReadUser($another) {
   global $user;
@@ -69,44 +32,8 @@ function isSameYear($another) {
 
 if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
   $resource_id = $_GET["rid"];
-  $classId = empty($_GET["classId"]) ? $user->classId : $_GET["classId"];
 
-  if ($resource_id == "departments") {
-    $response = get_departments();
-  } elseif ($resource_id == "classes") {
-    $classes = [];
-    if (!empty($_GET["classId"])) {
-      $response = array_filter(get_classes(["id" => $classId]), "canReadClass");
-    } elseif (!empty($_GET["department_id"])) {
-      $filters = ["department_id" => $_GET["department_id"]];
-      $response = array_filter(get_classes($filters), "canReadClass");
-    } else {
-      $response = array_filter(get_classes(), "canReadClass");
-    }
-  } elseif ($resource_id == "class_candidates") {
-    $response = get_class_candidates($user);
-  } elseif ($resource_id == "course_groups") {
-    $response = get_course_groups($_GET["detailed"]);
-  } elseif ($resource_id == "admins") {
-    $response = isAdmin($user) 
-        ? get_admins(intval($_GET["permission"])) 
-        : permision_denied_error();
-  } elseif ($resource_id == "tasks") {
-    if (isset($_GET["department_id"])) {
-      $response = get_tasks($_GET["department_id"]);
-    } else {
-      $response = get_tasks(null);
-    }
-  } elseif ($resource_id == "task_records") {
-    $response = get_last_task_record($student_id, $_GET["task_id"],
-        isset($_GET["sub_index"]) ? $_GET["sub_index"] : null);
-  } elseif ($resource_id == "task_history") {
-    $user_id = isAdmin($user) && isset($_GET["user_id"]) ? 
-        $_GET["user_id"] : $student_id; 
-    $response = get_task_history($user_id, $_GET["task_id"]);
-  } elseif ($resource_id == "courses") {
-    $response = get_courses($_GET["group_id"]);
-  } elseif ($resource_id == "user_names") {
+  if ($resource_id == "user_names") {
     $response = get_user_names($_GET["prefix"], $user->id);
   } elseif ($resource_id == "users") {
     $id = empty($_GET["id"]) ? null : $_GET["id"];
@@ -128,18 +55,6 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
       $_SESSION["user"] = serialize($user);
       $response = $user;
     }
-  } elseif ($resource_id == "learning_records" && !empty($_GET["classId"])) {
-    $whose = $_GET["records"];
-    if ($whose == "class") {
-      $classInfo = get_class_info($_GET["classId"]);
-      if (!canRead($user, $classInfo)) {
-        $response = permision_denied_error();
-      }
-    }
-    if (!$response) {
-      $response = get_schedules($_GET["classId"], $_GET["term"], $whose,
-          $user->id);
-    }
   } elseif ($resource_id == "search") {
     if (isYearLeader($user)) {
       $response = search($_GET["prefix"]);
@@ -147,28 +62,6 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
         // For year leaders they can only see students of the same year.
         $response = array_filter($response, "isSameYear");
       }
-    }
-  } elseif ($resource_id == "task_stats") {
-    $startTime =
-        empty($_GET["start_time"]) ? null : intval($_GET["start_time"]);
-    $endTime = empty($_GET["end_time"]) ? null : intval($_GET["end_time"]);
-    $isIndex = empty($_GET["is_index"]) ? null : intval($_GET["is_index"]);
-
-    $response = get_class_task_stats($classId, $_GET["task_id"], $startTime,
-        $endTime, $isIndex);
-  } elseif ($resource_id == "state_stats") {
-    if (!isSysAdmin($user)) return;
-    $response = get_state_stats($_GET["country"]);
-  } elseif ($resource_id == "state_users") {
-    if (!isSysAdmin($user)) return;
-    $response = get_state_users($_GET["country"], $_GET["state"]);
-  } elseif ($resource_id == "class_prefs") {
-    if (isYearLeader($user) || isSysAdmin($user)) {
-      $response = get_class_prefs(
-          isset($_GET["department_id"]) ? null : $user->id,
-          isset($_GET["department_id"]) ? $_GET["department_id"] : null);
-    } else {
-      $response = get_class_prefs($user->id, null);
     }
   }
 } else if ($_SERVER ["REQUEST_METHOD"] == "POST" && isset ( $_POST ["rid"] )) {
@@ -179,48 +72,7 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
         (empty($_POST["id"]) ? "" : $_POST["id"]));
   }
 
-  if ($resource_id == "tasks") {
-    $task_id = $_POST["task_id"];
-    $task_user_id = 
-        empty($_POST["student_id"]) ? $student_id : $_POST["student_id"];
-    $duration = empty($_POST["duration"]) ? null : intval($_POST["duration"]);
-    if (canWriteUser($user, $task_user_id)) {
-      report_task($task_user_id, $task_id, $_POST["sub_index"], $_POST["count"],
-          $duration);
-      $response = get_last_task_record($task_user_id, $task_id, null);
-    } else {
-      $response = permision_denied_error();
-    }
-  } elseif ($resource_id == "task") {
-    if (!isSysAdmin($user)) return;
-    $response = ["updated" => update_task($_POST)];
-  } elseif ($resource_id == "schedule_tasks") {
-    $task_user_id = 
-        empty($_POST["student_id"]) ? $student_id : $_POST["student_id"];
-    $response = canWriteUser($user, $task_user_id)
-        ? ["updated" => report_schedule_task($task_user_id, $_POST)]
-        : permision_denied_error();
-  } elseif ($resource_id == "schedule") {
-    $response = ["updated" => update_schedule($_POST)];
-  }  elseif ($resource_id == "schedule_group") {
-    $response = canWriteClass($user, $_POST["classId"]) 
-        ? ["updated" => update_schedule_group($_POST)]
-        : permision_denied_error();
-  } elseif ($resource_id == "class") {
-    if (isSysAdmin($user) ||
-        !empty($_POST["id"]) && isClassLeader($user, $_POST["id"])) {
-      $response = ["updated" => update_class($_POST)];
-    }
-  } elseif ($resource_id == "course_group") {
-    if (!isYearLeader($user)) return;
-    $response = ["group" => update_course_group($_POST)];
-  } elseif ($resource_id == "department") {
-    if (!isSysAdmin($user)) return;
-    $response = ["updated" => update_department($_POST)];
-  } elseif ($resource_id == "course") {
-    if (!isYearLeader($user)) return;
-    $response = update_course($_POST); 
-  } elseif ($resource_id == "user") {
+  if ($resource_id == "user") {
     if (!isAgent($user) && intval($_POST["id"]) != intval($user->id)) {
       $response = permision_denied_error();
     } else {

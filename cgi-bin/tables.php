@@ -252,12 +252,7 @@ function get_user($email) {
   $result = $medoo->select("users", "*", ["email" => $email]);
   if (empty($result)) return null;
   
-  $classes = get_classes(["id" => $result[0]["classId"]]);
-
-  $user = new User($result[0]);
-  $user->classInfo = $classes[$user->classId];
-  
-  return $user;
+  return new User($result[0]);
 }
 
 function get_users($email, $agentId = null, $user_id = null) {
