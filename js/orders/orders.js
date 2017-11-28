@@ -56,9 +56,14 @@ define('orders/orders', [
             scope.names[order.name] = order.name;
           }
           
+          function calculate_order_sub_total(order) {
+            order.sub_total = order.items.reduce(
+                (sum, item) => sum + item.price * item.count, 0).toFixed(2);
+          }
+          
           function calculate_order_values(order) {
             order.status = parseInt(order.status);
-            order.sub_total = parseMoney(order.sub_total).toFixed(2);
+            calculate_order_sub_total(order);
             order.shipping = parseMoney(order.shipping).toFixed(2);
             order.int_shipping = parseMoney(order.int_shipping).toFixed(2);
             order.paid = parseMoney(order.paid).toFixed(2);
