@@ -409,7 +409,7 @@ define('orders/orders', [
           $rootScope.$on('reload-orders', scope.reload);
           scope.$watch('user', scope.reload);
         },
-        templateUrl : 'js/orders/orders.html?tag=201711112314'
+        templateUrl : 'js/orders/orders.html?tag=201711282314'
       };
     });
 });

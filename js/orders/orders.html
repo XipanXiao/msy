@@ -24,7 +24,7 @@
   </label>
   </div>
 </div>
-<div ng-if="admin && isOrderAdmin() && orders.length" class="css-table">
+<div ng-if="orders.length" class="css-table">
   <div class="css-table-row">
 	  <div class="css-table-cell"> 
 	    总数 {{stats.count}}
@@ -42,11 +42,10 @@
   <div ng-if="stats" class="section css-table order-details-line odd-even">
     <div class="css-table-row header">
       <div class="css-table-cell">编号</div>
-      <div class="css-table-cell">书名</div>
+      <div class="css-table-cell">商品</div>
       <div class="css-table-cell">价格</div>
       <div class="css-table-cell">数量</div>
       <div class="css-table-cell">合计</div>
-      <div class="css-table-cell">预计国际运费</div>
     </div>
     <div ng-repeat="item in stats.items" class="css-table-row">
       <div class="css-table-cell">{{$index + 1}}</div>
@@ -54,7 +53,6 @@
       <div class="css-table-cell">{{item.price}}</div>
       <div class="css-table-cell">{{item.count}}</div>
       <div class="css-table-cell">{{item.sub_total}}</div>
-      <div class="css-table-cell">{{item.int_shipping_estmt}}</div>
     </div>
     <div class="css-table-row">
       <div class="css-table-cell"></div>
@@ -62,7 +60,6 @@
       <div class="css-table-cell">合计</div>
       <div class="css-table-cell">{{stats.count}}</div>
       <div class="css-table-cell">{{stats.sub_total}}</div>
-      <div class="css-table-cell">{{stats.int_shipping_estmt}}</div>
     </div>
   </div>
   <hr>
