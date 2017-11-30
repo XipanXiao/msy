@@ -61,6 +61,10 @@
           href="http://www.zto.com/GuestService/BillNew?txtBill={{order.usps_track_id}}">
         包裹跟踪（中通）
       </a>
+      <a ng-if="order.usps_track_id && order.usps_track_id.length == 14" target="_blank"
+          href="https://www.kuaidi100.com/all/annengwuliu.shtml">
+        （安能）
+      </a>
     </div>
     <div class="css-table-cell">
       <div ng-if="order.shipping_date">发货：
