@@ -271,6 +271,8 @@ function get_users($email, $agentId = null, $user_id = null) {
   }
 
   $users = $medoo->select("users", $fields, $where);
+  if (empty($users)) return $users;
+
   foreach ($users as $index => $user) {
     $users[$index] = new User($user);
   }

@@ -50,9 +50,12 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
     } elseif (!empty($_GET["agent_id"])) {
       $response = get_users(null, $_GET["agent_id"]);
     } else {
-      $user = current(get_users($user->email));
-      // Refresh the session user data every time the user access the home page.
-      $_SESSION["user"] = serialize($user);
+      $reloadedUser = current(get_users($user->email));
+      if (!empty($reloadedUser)) {
+        $user = $reloadedUser;
+        // Refresh the session user data every time the user access the home page.
+        $_SESSION["user"] = serialize($user);
+      }
       $response = $user;
     }
   } elseif ($resource_id == "search") {
