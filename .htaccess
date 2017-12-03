@@ -1,7 +1,7 @@
 RewriteEngine on
-RewriteCond %{REQUEST_URI} !/maintain.html
-RewriteRule .* https://%{HTTP_HOST}/maintain.html [R,L]
-# RewriteCond %{HTTP:X-Forwarded-Proto} !https
-# RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
-# DirectoryIndex order.html
-DirectoryIndex maintain.html
+#RewriteCond %{REQUEST_URI} !/maintain.html
+#RewriteRule .* https://%{HTTP_HOST}/maintain.html [R,L]
+#DirectoryIndex maintain.html
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [R,L]
+DirectoryIndex order.html
