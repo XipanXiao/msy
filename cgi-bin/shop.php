@@ -43,10 +43,7 @@ function get_order($id) {
 function get_orders($user_id, $filters, $withItems) {
   global $medoo;
   
-  $sql = sprintf("SELECT %s FROM orders WHERE 1", "id, user_id, agent_id, status, ".
-      "sub_total, paid, shipping, int_shipping, name, email, phone, street, ".
-      "city, state, country, zip, usps_track_id, shipping_date, paid_date, ".
-      "created_time");
+  $sql = "SELECT * FROM orders WHERE 1";
   if ($user_id) {
     $sql = $sql. sprintf(" AND user_id=%d", $user_id);
   } elseif (!empty($filters["agent_id"])) {
@@ -63,9 +60,19 @@ function get_orders($user_id, $filters, $withItems) {
   $orders = $medoo->query($sql. ";")->fetchAll();
   if (!$withItems) return $orders;
 
+  $getid = function($order) {
+    return $order["id"];
+  };
+  $items = $medoo->select("order_details", "*",
+      ["order_id" => array_map($getid, $orders)]);
   foreach ($orders as $index => $order) {
-    $order["items"] = $medoo->select("order_details", "*", 
-        ["order_id" => $order["id"]]);
+    $order = array_filter($order, function ($k) { return !is_numeric($k); }, 
+        ARRAY_FILTER_USE_KEY);
+    $orderId = $order["id"];
+    $filtered = array_filter($items, function($item) use ($orderId) {
+      return $item["order_id"] == $orderId;
+    });
+    $order["items"] = array_values($filtered); 
     $orders[$index] = $order;
   }
   return $orders;
