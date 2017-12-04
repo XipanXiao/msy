@@ -66,8 +66,6 @@ function get_orders($user_id, $filters, $withItems) {
   $items = $medoo->select("order_details", "*",
       ["order_id" => array_map($getid, $orders)]);
   foreach ($orders as $index => $order) {
-    $order = array_filter($order, function ($k) { return !is_numeric($k); }, 
-        ARRAY_FILTER_USE_KEY);
     $orderId = $order["id"];
     $filtered = array_filter($items, function($item) use ($orderId) {
       return $item["order_id"] == $orderId;
