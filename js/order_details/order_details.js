@@ -29,7 +29,7 @@ define('order_details/order_details', [
             function combine(total, item) {
               return total + (item.item_id == itemId ? 1 : 0);
             }
-            return 2 == scope.order.items.reduce(combine, 0);
+            return 2 <= scope.order.items.reduce(combine, 0);
           };
           /// Given the selected row at [element], finds the containing order
           /// id.

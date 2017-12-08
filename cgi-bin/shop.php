@@ -227,7 +227,7 @@ function update_order_item($item) {
     $items = keyed_by_id($medoo->select("order_details", ["id", "count"], ["AND" => 
         ["order_id" => $item["order_id"], "item_id" => $item["item_id"]]
     ]));
-    if (sizeof($items) != 2) return 0;
+    if (sizeof($items) < 2) return 0;
 
     $orgItem = $items[$id];
     $delta = intval($item["count"]) - intval($orgItem["count"]);
