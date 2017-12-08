@@ -65,6 +65,10 @@
           href="https://www.kuaidi100.com/all/annengwuliu.shtml?track_id={{order.usps_track_id}}">
         （安能）
       </a>
+      <div>
+        <editable-label label="备注" value="order.comment" on-change="onUpdate()">
+        </editable-label>
+      </div>
     </div>
     <div class="css-table-cell">
       <div ng-if="order.shipping_date">发货：

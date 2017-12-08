@@ -60,7 +60,7 @@ define('order_details/order_details', [
             event.preventDefault();
           };
         },
-        templateUrl : 'js/order_details/order_details.html?tag=201711302038'
+        templateUrl : 'js/order_details/order_details.html?tag=201712072038'
       };
     });
 });

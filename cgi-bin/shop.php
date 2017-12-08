@@ -180,7 +180,8 @@ function validate_order_post() {
 function update_order($order, $is_manager) {
   global $medoo;
 
-  $data = build_update_data(["paid", "paypal_trans_id", "paid_date"], $order);
+  $data = build_update_data(["paid", "paypal_trans_id", "paid_date", "comment"],
+      $order);
   if ($is_manager) {
     $data = array_merge($data, build_update_data(["status", "shipping",
         "int_shipping", "sub_total", "usps_track_id"], $order));
