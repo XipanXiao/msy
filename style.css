@@ -681,3 +681,8 @@ body.white {
   width: 430px;
   z-index: 1;
 }
+
+.flex > shopping-cart {
+  flex: 1;
+}
+
