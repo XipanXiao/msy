@@ -10,6 +10,7 @@
     
     // Check connection
     if ($conn->connect_error) {
+      error_log("Connection failed". $conn->connect_error);
       die ( "Connection failed: " . $conn->connect_error );
     }
     
@@ -24,6 +25,7 @@
         'database_type' => 'mysql',
         'database_name' => $config->dbname,
         'server' => $config->servername,
+        'socket' => $config->socket,
         'username' => $config->username,
         'password' => $config->password,
         'charset' => $charset == NULL ? 'utf8' : $charset,

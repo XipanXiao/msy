@@ -12,6 +12,13 @@
     "dbname": "",
     "session_path": "/tmp"
   },
+  "mzy-us.appspot.com": {
+    "servername": null,
+    "socket": "${MYSQL_SOCKET}",
+    "username": "${MYSQL_USERNAME}",
+    "password": "${MYSQL_PASSWORD}",
+    "dbname": "msy"
+  },
   "msy-bicw.rhcloud.com": {
     "servername": "${OPENSHIFT_MYSQL_DB_HOST}",
     "username": "${OPENSHIFT_MYSQL_DB_USERNAME}",
