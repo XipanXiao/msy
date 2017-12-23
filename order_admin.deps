@@ -13,6 +13,7 @@ js/search_bar/search_bar.js
 js/app_bar/app_bar.js
 js/departments/departments.js
 js/shopping_cart/shopping_cart.js
+js/inventory_history/inventory_history.js
 js/inventory/inventory.js
 js/order_details/order_details.js
 js/orders/orders.js

@@ -1,11 +1,13 @@
 define('inventory/inventory', [
     'model/cart',
     'editable_label/editable_label',
+    'inventory_history/inventory_history',
     'orders/orders',
-    'shopping_cart/shopping_cart', 
+    'shopping_cart/shopping_cart',
     'services', 'utils'], function(Cart) {
   return angular.module('InventoryModule', [
         'EditableLabelModule',
+        'InventoryHistoryModule',
         'OrdersModule',
         'ShoppingCartModule',
         'ServicesModule',
@@ -19,6 +21,7 @@ define('inventory/inventory', [
           scope.year = new Date().getFullYear();
           scope.cart = new Cart({rpc: rpc, utils: utils,
               rootScope: $rootScope});
+          scope.selected = {};
 
           function getCategories() {
             return rpc.get_item_categories().then(function(response) {
@@ -80,7 +83,7 @@ define('inventory/inventory', [
           $rootScope.$on('reload-orders', reload);
           reload();
         },
-        templateUrl : 'js/inventory/inventory.html?tag=201707032246'
+        templateUrl : 'js/inventory/inventory.html?tag=201712232246'
       };
     });
 });

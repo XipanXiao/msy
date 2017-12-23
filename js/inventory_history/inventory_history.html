@@ -1,0 +1,20 @@
+<div class="padded-element" ng-repeat="country in countries">
+  <h2>"{{item.name}}"库存历史({{country}})</h2>
+  <div class="css-table odd-even">
+    <div class="css-table-row header">
+      <div class="css-table-cell">日期</div>
+      <div class="css-table-cell">订单号</div>
+      <div class="css-table-cell">客户</div>
+      <div class="css-table-cell">数量</div>
+      <div class="css-table-cell">结余</div>
+    </div>
+    <div ng-repeat="item in history.items | filter:{country: country}"
+        class="css-table-row">
+      <div class="css-table-cell">{{item.created_time}}</div>
+      <div class="css-table-cell">{{item.order_id}}</div>
+      <div class="css-table-cell">{{item.name}}</div>
+      <div class="css-table-cell">{{item.count}}</div>
+      <div class="css-table-cell">{{item.balance[country]}}</div>
+    </div>
+  </div>
+</div>

@@ -89,6 +89,11 @@ define('services', [], function() {
         return $http.get('cgi-bin/shop.php?rid=inventory');
       },
       
+      get_inventory_history: function(item_id) {
+        return $http.get('cgi-bin/shop.php?rid=inventory_history' +
+            '&item_id={0}'.format(item_id));
+      },
+      
       update_user: function(user) {
         user.rid = 'user';
         return http_form_post($http, $httpParamSerializerJQLike(user));

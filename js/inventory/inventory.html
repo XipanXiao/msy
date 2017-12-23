@@ -13,7 +13,9 @@
       <div class="css-table-cell"></div>
     </div>
     <div ng-repeat="item in items | filter: {name: namePrefix}"
-        class="css-table-row hover-button-row">
+        class="css-table-row hover-button-row selectable"
+        ng-class="{'selected': item == selected.item}"
+        ng-click="selected.item = item">
       <div class="css-table-cell">{{item.name}}</div>
       <div class="css-table-cell">¥{{item.cost}}</div>
       <div class="css-table-cell">¥{{item.price}}</div>
@@ -35,6 +37,8 @@
       </div>
     </div>
   </div>
+  <inventory-history ng-if="selected.item && cart.isEmpty" item="selected.item">
+  </inventory-history>
   <shopping-cart cart="cart" user="user" refill="true"></shopping-cart>
 </div>
 <hr>
