@@ -82,20 +82,15 @@ function get_inventory($agent_id) {
   return $medoo->select("inventory", "*", ["agent_id" => $agent_id]);
 }
 
-function get_inventory_history($item_id) {
+function get_inventory_history($agent_id, $item_id) {
   global $medoo;
   
-  $items = $medoo->select("order_details", ["order_id", "count"],
-      ["item_id" => $item_id]);
-  if (!$items) {
-    $items = [];
-  }
-  
-  $orderIds = array_unique(array_map(function($item) { 
-  	return $item["order_id"];
-  }, $items));
-  $orders = $medoo->select("orders", ["id", "name", "country", "created_time"]);
-  return ["items" => $items, "orders" => keyed_by_id($orders)];
+  return $medoo->select("order_details",
+      ["[>]orders" => ["order_id" => "id"]],
+      ["order_details.count", "order_details.order_id",
+      		"orders.id", "orders.name", "orders.country", "orders.created_time"],
+      ["AND" => ["order_details.item_id" => $item_id,
+          "orders.agent_id" => $agent_id]]);
 }
 
 function update_inventory($agent_id, $itemDetail, $countryCode,
@@ -372,7 +367,7 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
   } elseif ($resource_id == "inventory") {
     $response = get_inventory($user->id);
   } elseif ($resource_id == "inventory_history") {
-    $response = get_inventory_history($_GET["item_id"]);
+    $response = get_inventory_history($user->id, $_GET["item_id"]);
   }
 } else if ($_SERVER ["REQUEST_METHOD"] == "POST" && isset ( $_POST ["rid"] )) {
   $resource_id = $_POST["rid"];

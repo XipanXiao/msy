@@ -8,7 +8,7 @@
       <div class="css-table-cell">数量</div>
       <div class="css-table-cell">结余</div>
     </div>
-    <div ng-repeat="item in history.items | filter:{country: country}"
+    <div ng-repeat="item in items | filter:{country: country}"
         class="css-table-row">
       <div class="css-table-cell">{{item.created_time}}</div>
       <div class="css-table-cell">{{item.order_id}}</div>

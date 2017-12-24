@@ -13,16 +13,11 @@ define('inventory_history/inventory_history', [
           scope.$watch("item", reload);
           function reload(item) {
             rpc.get_inventory_history(item.id).then(function(response) {
-              scope.history = response.data;
+              scope.items = response.data;
 
               var balance = {"CN": 0, "US": 0};
-              scope.history.items.forEach(function(item) {
-                var order = scope.history.orders[item.order_id];
-                item.name = order.name;
-                item.created_time = order.created_time;
-
-                var country = order.country;
-                item.country = country;
+              scope.items.forEach(function(item) {
+                var country = item.country;
                 item.balance = {};
                 balance[country] = item.balance[country] = balance[country] -
                     parseInt(item.count);
