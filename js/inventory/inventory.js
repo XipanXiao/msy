@@ -18,6 +18,8 @@ define('inventory/inventory', [
           user: '='
         },
         link: function(scope) {
+          var cn = scope.cn = 'cn';
+          var us = scope.us = 'us';
           scope.year = new Date().getFullYear();
           scope.cart = new Cart({rpc: rpc, utils: utils,
               rootScope: $rootScope});
@@ -40,17 +42,60 @@ define('inventory/inventory', [
               return scope.items;
             });
           }
-          
-          scope.save = function(item, country) {
-            var delta = item['inventory_' + country] -
+
+          function itemDelta(item, country) {
+            return item['inventory_' + country] - 
                 item['saved_inventory_' + country];
-            rpc.update_inventory(item.id, country, delta)
+          }
+
+          scope.changed = function(item) {
+            item.dirty = itemDelta(item, cn) || itemDelta(item, us);
+            setTimeout(function() {
+              scope.$apply();
+            }, 0);
+          };
+          
+          scope.isDirty = function() {
+            return (scope.items || []).some(function(item) {
+              return item.dirty;
+            });
+          };
+          
+          scope.cancel = function() {
+            scope.items.forEach(function(item) {
+              item['inventory_' + cn] = item['saved_inventory_' + cn]; 
+              item['inventory_' + us] = item['saved_inventory_' + us];
+              item.dirty = false;
+            });
+          };
+          
+          scope.save = function() {
+            var requests = [];
+            scope.items.forEach(function(item) {
+              requests.push(saveRequest(item, cn));
+              requests.push(saveRequest(item, us));
+            });
+            utils.requestOneByOne(requests);
+          };
+          
+          window.onbeforeunload = function() {
+            return scope.isDirty() ? 'Dirty' : null;
+          };
+
+          function saveRequest(item, country) {
+            var delta = itemDelta(item, country);
+            return function() {
+              if (!delta) return utils.truePromise();
+              return rpc.update_inventory(item.id, country, delta)
                 .then(function(response) {
                   if (response.data.updated) {
                     item['saved_inventory_' + country] = 
                         item['inventory_' + country];
+                    scope.changed(item);
+                    return true;
                   }
                 });
+            }
           };
 
           function getInventory() {

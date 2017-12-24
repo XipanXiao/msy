@@ -402,8 +402,8 @@ if ($_SERVER ["REQUEST_METHOD"] == "GET" && isset ( $_GET ["rid"] )) {
         ? ["updated" => update_item($_POST)]
         : permision_denied_error();
   } elseif ($resource_id == "inventory") {
-    //$response = 
-    //    ["updated" => update_inventory($user->id, $_POST, $_POST["country"])];
+    $response = 
+        ["updated" => update_inventory($user->id, $_POST, $_POST["country"])];
   } elseif ($resource_id == "split_item") {
     $response = isAgent($user)
       ? ["updated" => split_order_item($_POST["item_id"])]

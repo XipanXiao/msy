@@ -1,5 +1,7 @@
 <div class="padded-element">
   <label>输入名字查找: <input type="text" ng-model="namePrefix"></label>
+  <input type="button" value="取消" ng-disabled="!isDirty()" ng-click="cancel()">
+  <input type="button" value="保存" ng-disabled="!isDirty()" ng-click="save()">
 </div>
 <div class="flex">
   <div class="css-table odd-even">
@@ -21,16 +23,17 @@
       <div class="css-table-cell">¥{{item.price}}</div>
       <div class="css-table-cell">
         <editable-label type="number" value="item.inventory_cn"
-            on-change="save(item, 'cn')">
+            on-change="changed(item, cn)">
         </editable-label>
       </div>
       <div class="css-table-cell">
         <editable-label type="number" value="item.inventory_us"
-            on-change="save(item, 'us')">
+            on-change="changed(item, us)">
         </editable-label>
       </div>
       <div class="css-table-cell">{{categories[item.category].name}}</div>
       <div class="css-table-cell">
+        <span ng-show="item.dirty">*</span>
         <iron-icon icon="add" class="hover-button clickable"
             ng-click="addToCart(item)">
         </iron-icon>
