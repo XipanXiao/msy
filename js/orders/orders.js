@@ -12,16 +12,18 @@ define('orders/orders', [
           admin: '@',
           status: '@',
           user: '=',
-          year: '='
+          year: '@'
         },
         link: function(scope) {
           scope.years = [];
+          scope.selectedYear = {};
 
-          scope.$watch('year', function() {
-            for (var year = 2017; year <= (scope.year || 0); year++) {
+          if (scope.year) {
+            scope.selectedYear.year = new Date().getFullYear();
+            for (var year = 2017; year <= scope.selectedYear.year; year++) {
               scope.years.push(year);
             }
-          });
+          };
           
           function get_items() {
             return rpc.get_items(null, 99).then(function(response) {
@@ -30,7 +32,8 @@ define('orders/orders', [
           }
           
           function get_orders() {
-            var filters = {items: true, status: scope.status, year: scope.year};
+            var filters = {items: true, status: scope.status,
+                year: scope.selectedYear.year};
             var user_id = !scope.admin && scope.user.id;
             return rpc.get_orders(user_id, filters).then(function(response) {
               var orders = response.data || [];

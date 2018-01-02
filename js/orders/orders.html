@@ -1,7 +1,7 @@
 <div class="css-table">
   <div class="css-table-row">
   <label class="css-table-cell" ng-if="year">订单年份：
-    <select ng-options="value for value in years" ng-model="year"
+    <select ng-options="value for value in years" ng-model="selectedYear.year"
         ng-change="reload()"></select>
   </label>
   <label class="css-table-cell" ng-show="orders.length">输入订单号过滤：

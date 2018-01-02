@@ -32,7 +32,6 @@ define('order_admin_app', [
               return perm.isOrderAdmin();
             };
 
-            scope.year = new Date().getFullYear();
             scope.pageLoaded = [];
 
             var pages = document.querySelector('iron-pages');
