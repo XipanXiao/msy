@@ -46,7 +46,7 @@ define('order_stats/order_stats', [
               var month = getMonth(order);
               var stat = scope.months[month] || utils.mix_in({}, emptyStat);
               scope.months[month] = stat; 
-              if (order.sub_total > 0) {
+              if (order.sub_total >= 0) {
                 stat.gross += +order.sub_total;
                 stat.itemsOut += order.count;
               } else {
