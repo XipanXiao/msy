@@ -2,49 +2,75 @@ define('order_stats/order_stats', [
     'services', 'utils'], function() {
   return angular.module('OrderStatsModule', [
       'ServicesModule', 'UtilsModule'])
-    .directive('orderStats', function($rootScope, rpc, utils) {
+    .directive('orderStats', function(rpc, utils) {
       function toMoney(num) {
         return Math.round( parseFloat(num) * 1e2 ) / 1e2;
       }
       return {
+        scope: {
+          year: '=',
+          orders: '='
+        },
         link: function(scope) {
-          scope.years = [];
-          scope.selectedYear = {value: new Date().getFullYear()};
-          for (var year = 2011; year <= scope.selectedYear.value; year++) {
-            scope.years.push(year);
+          function getMonth(order) {
+            var d = new Date(order.created_time);
+            return d.getMonth() + 1;
           }
           
-          scope.reload = function() {
-            scope.items = {};
+          function calculate_order_sub_total(order) {
+            order.sub_total = order.items.reduce(
+                (sum, item) => sum + item.price * item.count, 0).toFixed(2);
+            order.count = order.items.reduce((sum, item) => sum + (+item.count),
+                0);
+          }
 
-            var year = scope.selectedYear.value;
-            rpc.get_order_stats(year).then(function(response) {
-              var classes = response.data;
-              if (!classes) return;
-
-              rpc.get_items(null, 99).then(function(response) {
-                var items = response.data;
-                utils.forEach(classes, function(classInfo) {
-                  classInfo.sub_total = 0.00;
-                  classInfo.total_count = 0;
-
-                  utils.forEach(classInfo.stats, function(stat) {
-                    scope.items[stat.item_id] = items[stat.item_id];
-                    var groupCount = parseInt(stat.group_count);
-                    classInfo.sub_total += 
-                        groupCount * toMoney(stat.price);
-                    classInfo.total_count += groupCount;
-                  });
-                  classInfo.sub_total = classInfo.sub_total.toFixed(2);
-                });
-                scope.items = utils.values(scope.items);
-                scope.classes = classes;
-              });
+          function getIncomingOrders() {
+            var filters = {items: true, status: -1, year: scope.year};
+            return rpc.get_orders(null, filters).then(function(response) {
+              var orders = response.data || [];
+              orders.forEach(calculate_order_sub_total);
+              return scope.incoming_orders = orders;
             });
+          }
+
+          function calcStats() {
+            var orders = scope.orders.concat(scope.incoming_orders);
+            var emptyStat = {
+                gross: 0.00,
+                cost: 0.00,
+                itemsIn: 0,
+                itemsOut: 0,
+            };
+            scope.stats = utils.mix_in({}, emptyStat);
+            orders.forEach(function(order) {
+              var month = getMonth(order);
+              var stat = scope.months[month] || utils.mix_in({}, emptyStat);
+              scope.months[month] = stat; 
+              if (order.sub_total > 0) {
+                stat.gross += +order.sub_total;
+                stat.itemsOut += order.count;
+              } else {
+                stat.cost += -order.sub_total;
+                stat.itemsIn += -order.count;
+              }
+            });
+            scope.monthKeys = utils.keys(scope.months);
+            scope.months.forEach(function(month) {
+              scope.stats.gross += +month.gross;
+              scope.stats.itemsOut += month.itemsOut;
+              scope.stats.cost += +month.cost;
+              scope.stats.itemsIn += +month.itemsIn;
+            });
+            return utils.truePromise();
           };
           
-          $rootScope.$on('reload-orders', scope.reload);
-          scope.reload();
+          function reload(orders) {
+            scope.months = [];
+            if (!orders || !orders.length) return;
+            utils.requestOneByOne([getIncomingOrders, calcStats]); 
+          }
+          scope.$watch('orders', reload);
+          reload(scope.orders);
         },
         templateUrl : 'js/order_stats/order_stats.html'
       };

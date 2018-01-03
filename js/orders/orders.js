@@ -1,8 +1,11 @@
 define('orders/orders', [
     'order_details/order_details',
+    'order_stats/order_stats',
     'services', 'permission', 'utils'], function() {
   return angular.module('OrdersModule', [
-      'OrderDetailsModule', 'ServicesModule', 'UtilsModule'])
+      'OrderDetailsModule', 
+      'OrderStatsModule',
+      'ServicesModule', 'UtilsModule'])
     .directive('orders', function($rootScope, rpc, perm, utils) {
       function parseMoney(value) {
         return value && parseFloat(value) || 0.00;
@@ -14,6 +17,7 @@ define('orders/orders', [
           user: '=',
           year: '@'
         },
+        restrict: 'E',
         link: function(scope) {
           scope.years = [];
           scope.selectedYear = {};

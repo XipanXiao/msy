@@ -64,6 +64,8 @@
   </div>
   <hr>
 </div>
+<order-stats ng-if="year" orders="orders" year="selectedYear.year">
+</order-stats>
 <h3>订单列表</h3>
 <div ng-repeat="order in orders | filter: {id: orderId, phone: tel, name: name} | orderBy: '-created_time'"
     class="section order-details-line">

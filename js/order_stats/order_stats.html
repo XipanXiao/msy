@@ -1,38 +1,28 @@
-<label class="css-table-cell" ng-if="year">订单年份：
-  <select ng-options="value for value in years" ng-model="selectedYear.value"
-      ng-change="reload()">
-  </select>
-</label>
-<div class="css-table odd-even">
+<div class="css-table odd-even center" ng-if="months.length">
   <div class="css-table-row header">
-    <div class="css-table-cell">序号</div>
-    <div class="css-table-cell">货品名字</div>
-    <div ng-repeat="classInfo in classes" class="center-align css-table-cell">
-      <div>{{classInfo.name}}</div>
-      <div class="flex">
-        <div class="split-cell">数量</div>
-        <div>价格</div>
-      </div>
-    </div>
+    <div class="css-table-cell">月份</div>
+    <div class="css-table-cell">出货</div>
+    <div class="css-table-cell">销售额</div>
+    <div class="css-table-cell">进货</div>
+    <div class="css-table-cell">成本</div>
+    <div class="css-table-cell">利润</div>
   </div>
-  <div ng-repeat="item in items" class="css-table-row">
-    <div class="css-table-cell">{{$index + 1}}</div>
-    <div class="css-table-cell">{{item.name}}</div>
-    <div ng-repeat="classInfo in classes" class="css-table-cell">
-      <div class="flex">
-        <div class="split-cell">{{classInfo.stats[item.id].group_count}}</div>
-        <div>{{classInfo.stats[item.id].price}}</div>
-      </div>
+  <div ng-repeat="month in monthKeys" class="css-table-row">
+    <div class="css-table-cell">{{month}}</div>
+    <div class="css-table-cell">{{months[month].itemsOut}}</div>
+    <div class="css-table-cell">{{months[month].gross.toFixed(2)}}</div>
+    <div class="css-table-cell">{{months[month].itemsIn}}</div>
+    <div class="css-table-cell">{{months[month].cost.toFixed(2)}}</div>
+    <div class="css-table-cell">
+      {{(months[month].gross - months[month].cost).toFixed(2)}}
     </div>
   </div>
   <div class="css-table-row">
     <div class="css-table-cell">总计</div>
-    <div class="css-table-cell"></div>
-    <div ng-repeat="classInfo in classes" class="css-table-cell">
-      <div class="flex">
-        <div class="split-cell">{{classInfo.total_count}}</div>
-        <div>{{classInfo.sub_total}}</div>
-      </div>
-    </div>
+    <div class="css-table-cell">{{stats.itemsOut}}</div>
+    <div class="css-table-cell">{{stats.gross.toFixed(2)}}</div>
+    <div class="css-table-cell">{{stats.itemsIn}}</div>
+    <div class="css-table-cell">{{stats.cost.toFixed(2)}}</div>
+    <div class="css-table-cell">{{(stats.gross - stats.cost).toFixed(2)}}</div>
   </div>
 </div>
