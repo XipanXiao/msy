@@ -82,6 +82,7 @@
       <a href="invoice_print.html?order_id={{order.id}}" target="_blank">
         Invoice
       </a>
+      <div>利润: {{order.profit}}</div>
     </div>
     <div class="css-table-cell">
       <iron-icon icon="delete" ng-click="onCancel()" class="delete-button"
@@ -102,6 +103,7 @@
     <div class="css-table-cell">名称</div>
     <div class="css-table-cell">数量</div>
     <div class="css-table-cell">单价</div>
+    <div class="css-table-cell">利润</div>
     <div ng-if="admin" class="css-table-cell"></div>
   </div>
   <div ng-repeat="item in order.items"
@@ -120,6 +122,9 @@
       <editable-label value="item.price"
           on-change="onUpdateItem({'order': order, 'item': item})">
       </editable-label>
+    </div>
+    <div class="css-table-cell">
+      {{(item.count * (item.price - item.cost)).toFixed(2)}}
     </div>
     <div class="css-table-cell" ng-if="admin">
       <iron-icon icon="delete" class="delete-button"

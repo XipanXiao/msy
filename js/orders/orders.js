@@ -64,8 +64,12 @@ define('orders/orders', [
           }
           
           function calculate_order_sub_total(order) {
-            order.sub_total = order.items.reduce(
-                (sum, item) => sum + item.price * item.count, 0).toFixed(2);
+            var sub_total = order.items.reduce(
+                (sum, item) => sum + item.price * item.count, 0);
+            var cost = order.items.reduce(
+                (sum, item) => sum + item.cost * item.count, 0);
+            order.sub_total = sub_total.toFixed(2);
+            order.profit = (sub_total - cost).toFixed(2);
           }
           
           function calculate_order_values(order) {
