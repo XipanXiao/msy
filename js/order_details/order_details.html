@@ -98,6 +98,12 @@
 </div>
 <div class="css-table shopping-cart-list" ondrop="dropItem(event)"
     ondragover="allowDrop(event)" id="{{order.id}}-order">
+  <div class="css-table-row header">
+    <div class="css-table-cell">名称</div>
+    <div class="css-table-cell">数量</div>
+    <div class="css-table-cell">单价</div>
+    <div ng-if="admin" class="css-table-cell"></div>
+  </div>
   <div ng-repeat="item in order.items"
       class="css-table-row selectable deletable"
       ng-class="{'selected': item.selected}"
