@@ -111,6 +111,7 @@ define('orders/orders', [
             var stats = scope.stats = {
               count: 0,
               sub_total: 0.00,
+              cost: 0.00,
               grand_total: 0.00,
               int_shipping: 0.00,
               int_shipping_estmt: 0.00,
@@ -131,6 +132,8 @@ define('orders/orders', [
                 var price = parseMoney(item.price);
                 stat.count = (stat.count || 0) + parseInt(item.count);
                 stat.sub_total = (stat.sub_total || 0.00) + price * item.count;
+                stat.cost = (stat.cost || 0.00) +
+                    parseMoney(item.cost) * item.count;
                 stat.int_shipping_estmt = (stat.int_shipping_estmt || 0) + 
                     parseMoney(info && info.int_shipping || 0.0) * 
                     item.count;
@@ -139,6 +142,7 @@ define('orders/orders', [
             utils.forEach(stats.items, function(item) {
               stats.count += item.count;
               stats.sub_total += item.sub_total;
+              stats.cost += item.cost;
               stats.int_shipping_estmt += item.int_shipping_estmt;
 
               item.sub_total = item.sub_total.toFixed(2);

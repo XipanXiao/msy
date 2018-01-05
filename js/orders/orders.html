@@ -26,15 +26,18 @@
 </div>
 <div ng-if="orders.length" class="css-table">
   <div class="css-table-row">
-	  <div class="css-table-cell"> 
-	    总数 {{stats.count}}
-	  </div>
-	  <div class="css-table-cell"> 
-	    金额 {{stats.sub_total}}
-	  </div>
-	  <label class="css-table-cell">显示汇总 
-	    <input type="checkbox" ng-model="stats.showStats">
-	  </label>
+    <div class="css-table-cell"> 
+      总数 {{stats.count}}
+    </div>
+    <div class="css-table-cell"> 
+      金额 {{stats.sub_total}}
+    </div>
+    <div class="css-table-cell"> 
+      利润 {{(+stats.sub_total - (+stats.cost)).toFixed(2)}}
+    </div>
+    <!--label class="css-table-cell">显示汇总 
+      <input type="checkbox" ng-model="stats.showStats">
+    </label-->
   </div>
 </div>
 <div ng-if="stats.showStats && admin">
