@@ -5,12 +5,11 @@
     "password": "2345678901",
     "dbname": "msy"
   },
-  "mzy.000webhostapp.com": {
-    "servername": "localhost",
-    "username": "",
-    "password": "",
-    "dbname": "",
-    "session_path": "/tmp"
+  "default": {
+    "servername": "${MYSQL_SERVICE_HOST}",
+    "username": "${MYSQL_USER}",
+    "password": "${MYSQL_PASSWORD}",
+    "dbname": "msy"
   },
   "mzy-us.appspot.com": {
     "servername": null,
