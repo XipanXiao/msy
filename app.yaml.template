@@ -8,7 +8,7 @@ handlers:
   upload: .+\.(html|js|css|ico|jpg)$
   secure: always
 # Serve php scripts.
-- url: /(cgi-bin/.+\.php)$
+- url: /(php/.+\.php)$
   script: \1
   secure: always
 - url: /(images/.+\.jpg)$

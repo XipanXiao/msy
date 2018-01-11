@@ -9,7 +9,7 @@ define('services', [], function() {
     };
   }
 
-  var serviceUrl = 'cgi-bin/services.php';
+  var serviceUrl = 'php/services.php';
   var departmentsPromise;
   
   function http_form_post($http, data, url) {
@@ -57,40 +57,40 @@ define('services', [], function() {
       },
 
       get_order: function(order_id) {
-        var url = "cgi-bin/shop.php?rid=orders&order_id={0}".format(order_id);
+        var url = "php/shop.php?rid=orders&order_id={0}".format(order_id);
         return $http.get(url);
       },
       
       get_orders: function(student_id, filters) {
-        var url = "cgi-bin/shop.php?rid=orders&status={0}&items={1}&year={2}" 
+        var url = "php/shop.php?rid=orders&status={0}&items={1}&year={2}" 
             .format(filters.status || '', filters.items || '', 
             filters.year || '');
         return $http.get(url);
       },
       
       get_items: function(category, level) {
-        var url = 'cgi-bin/shop.php?rid=items&category={0}&level={1}'
+        var url = 'php/shop.php?rid=items&category={0}&level={1}'
             .format(category || '', parseInt(level) || (level === 0 ? 0 : ''));
         return $http.get(url);
       },
       
       get_item_categories: function(level) {
-        var url = 'cgi-bin/shop.php?rid=item_categories&level={0}'
+        var url = 'php/shop.php?rid=item_categories&level={0}'
             .format(parseInt(level) || (level === 0 ? 0 : ''));
         return $http.get(url);
       },
       
       get_order_stats: function(year) {
-        var url = 'cgi-bin/shop.php?rid=order_stats&year={0}'.format(year);
+        var url = 'php/shop.php?rid=order_stats&year={0}'.format(year);
         return $http.get(url);
       },
       
       get_inventory: function() {
-        return $http.get('cgi-bin/shop.php?rid=inventory');
+        return $http.get('php/shop.php?rid=inventory');
       },
       
       get_inventory_history: function(item_id) {
-        return $http.get('cgi-bin/shop.php?rid=inventory_history' +
+        return $http.get('php/shop.php?rid=inventory_history' +
             '&item_id={0}'.format(item_id));
       },
       
@@ -106,13 +106,13 @@ define('services', [], function() {
       update_order: function(order) {
         order.rid = 'orders';
         return http_form_post($http, $httpParamSerializerJQLike(order),
-            'cgi-bin/shop.php');
+            'php/shop.php');
       },
       
       update_order_item: function(item) {
         item.rid = 'order_details';
         return http_form_post($http, $httpParamSerializerJQLike(item),
-            'cgi-bin/shop.php');
+            'php/shop.php');
       },
       
       merge_orders: function(order_ids) {
@@ -121,7 +121,7 @@ define('services', [], function() {
             order_ids: order_ids
         };
         return http_form_post($http, $httpParamSerializerJQLike(request),
-            'cgi-bin/shop.php');
+            'php/shop.php');
       },
       
       move_order_items: function(fromOrder, toOrder) {
@@ -131,19 +131,19 @@ define('services', [], function() {
             to_order: toOrder
         };
         return http_form_post($http, $httpParamSerializerJQLike(request),
-            'cgi-bin/shop.php');
+            'php/shop.php');
       },
       
       update_item: function(item) {
         item.rid = 'items';
         return http_form_post($http, $httpParamSerializerJQLike(item),
-            'cgi-bin/shop.php');
+            'php/shop.php');
       },
 
       split_item: function(item_id) {
         var data = {rid: 'split_item', item_id: item_id};
         return http_form_post($http, $httpParamSerializerJQLike(data),
-            'cgi-bin/shop.php');
+            'php/shop.php');
       },
       
       update_inventory: function(item_id, country, delta) {
@@ -154,7 +154,7 @@ define('services', [], function() {
           count: delta
         };
         return http_form_post($http, $httpParamSerializerJQLike(data),
-            'cgi-bin/shop.php');
+            'php/shop.php');
       },
       
       remove_user: function(user_id) {
@@ -163,12 +163,12 @@ define('services', [], function() {
       },
 
       remove_order: function(order_id) {
-        var url = '{0}?rid=orders&id={1}'.format('cgi-bin/shop.php', order_id);
+        var url = '{0}?rid=orders&id={1}'.format('php/shop.php', order_id);
         return $http.delete(url);
       },
 
       remove_order_item: function(id) {
-        var url = '{0}?rid=order_details&id={1}'.format('cgi-bin/shop.php', id);
+        var url = '{0}?rid=order_details&id={1}'.format('php/shop.php', id);
         return $http.delete(url);
       },
       
