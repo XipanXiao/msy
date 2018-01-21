@@ -18,7 +18,7 @@
         class="css-table-row hover-button-row selectable"
         ng-class="{'selected': item == selected.item}"
         ng-click="selected.item = item">
-      <div class="css-table-cell">{{item.name}}</div>
+      <div class="css-table-cell">{{item.short_name || item.name}}</div>
       <div class="css-table-cell">¥{{item.cost}}</div>
       <div class="css-table-cell">¥{{item.price}}</div>
       <div class="css-table-cell">

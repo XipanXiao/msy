@@ -45,7 +45,7 @@ define('item_list/item_list', ['flying/flying', 'services', 'utils'], function()
             }
           });
         },
-        templateUrl : 'js/item_list/item_list.html?tag=201711042246'
+        templateUrl : 'js/item_list/item_list.html?tag=201801212246'
       };
     });
 });
